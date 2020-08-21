@@ -1,0 +1,28 @@
+{
+    "name": "portedcheese/variation-cart",
+    "description": "Cart for product variations",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vladimir",
+            "email": "dev@gis4biz.ru"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+      "portedcheese/product-variation": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "PortedCheese\\VariationCart\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "PortedCheese\\VariationCart\\ServiceProvider"
+            ]
+        }
+    }
+}
