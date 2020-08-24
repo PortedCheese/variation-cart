@@ -120,6 +120,7 @@
                         else {
                             this.errors.push([result.message]);
                         }
+                        this.$root.$emit("change-cart", result.cart);
                     })
                     .catch(error => {
                         let response = error.response;

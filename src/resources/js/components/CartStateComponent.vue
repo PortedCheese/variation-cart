@@ -1,8 +1,11 @@
 <template>
     <a href="#" :class="baseClass" class="cart-state">
-        <svg class="cart-state__ico">
-            <use xlink:href="#cart-ico"></use>
-        </svg>
+        <span class="cart-state__cover">
+            <svg class="cart-state__ico">
+                <use xlink:href="#cart-ico"></use>
+            </svg>
+            <span v-if="count > 0" class="badge badge-primary cart-state__count">{{ count }}</span>
+        </span>
         <span class="cart-state__title">
             Корзина
         </span>
