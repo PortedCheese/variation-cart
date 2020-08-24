@@ -16,13 +16,15 @@ class CartActionsManager
      *
      * @return object
      */
-    public function getCartInfo()
+    public function getCartInfo(Cart $cart = null)
     {
-        $cart = $this->getCart();
+        if (empty($cart)) {
+            $cart = $this->getCart();
+        }
         if ($cart) {
             $data = [
                 "total" => $cart->total,
-                "count" => $cart->variations()->count(),
+                "count" => $this->getCartCount($cart),
             ];
         }
         else {
@@ -120,6 +122,22 @@ class CartActionsManager
         $cart = $this->findCartByCookie();
         if ($cart) return $cart;
         return $this->findCartByAuth();
+    }
+
+    /**
+     * Вычислить количество в корзине.
+     *
+     * @param Cart $cart
+     * @return int
+     */
+    protected function getCartCount(Cart $cart)
+    {
+        $count = 0;
+        foreach ($cart->variations as $variation) {
+            $pivot = $variation->pivot;
+            $count += $pivot->quantity;
+        }
+        return $count;
     }
 
     /**

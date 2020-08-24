@@ -22,9 +22,7 @@ class CartController extends Controller
             ->json([
                 "success" => $result["success"],
                 "message" => $result["message"],
-                "cart" => (object) [
-                    "total" => $cart->total,
-                ]
+                "cart" => variation_cart()->getCartInfo($cart)
             ]);
     }
 
