@@ -6,6 +6,7 @@ use App\Cart;
 use App\Observers\Vendor\VariationCart\CartObserver;
 use App\Observers\Vendor\VariationCart\ProductVariationObserver;
 use App\ProductVariation;
+use Illuminate\View\View;
 use PortedCheese\VariationCart\Console\Commands\VariationCartMakeCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
@@ -44,6 +45,9 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Расширить конфиг сайта.
         $this->extendConfigVariables();
+
+        // Добавить переменные в шаблоны.
+        $this->makeViewVariables();
     }
 
     public function register()
@@ -55,6 +59,16 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Facades.
         $this->initFacades();
+    }
+
+    protected function makeViewVariables()
+    {
+        // Информация о корзине.
+        view()->composer("variation-cart::site.includes.cart-state", function (View $view) {
+            $cartInfo = variation_cart()->getCartInfo();
+            $view->with("total", $cartInfo->total);
+            $view->with("count", $cartInfo->count);
+        });
     }
 
     /**
