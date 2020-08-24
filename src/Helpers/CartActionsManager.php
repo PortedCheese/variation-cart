@@ -29,6 +29,10 @@ class CartActionsManager
         }
         // Если вариация выключена, вернуть корзину без изменения.
         if ($variation->disabled_at) {
+            session()->flash("addToCartResult", [
+                "success" => false,
+                "message" => "Товар закончился",
+            ]);
             return $cart;
         }
         $oldQuantity = DB::table("cart_product_variation")

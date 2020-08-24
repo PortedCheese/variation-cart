@@ -14,10 +14,14 @@ class CartController extends Controller
     {
         $this->addToCartValidator($request->all());
         $cart = CartActions::addToCart($variation, $request->get("quantity"));
+        $result = session()->pull("addToCartResult", [
+            "success" => true,
+            "message" => "Товар добавлен в корзину"
+        ]);
         return response()
             ->json([
-                "success" => true,
-                "message" => "OK",
+                "success" => $result["success"],
+                "message" => $result["message"],
                 "cart" => (object) [
                     "total" => $cart->total,
                 ]
