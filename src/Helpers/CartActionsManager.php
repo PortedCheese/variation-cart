@@ -27,6 +27,10 @@ class CartActionsManager
         else {
             $cart = $this->initCart();
         }
+        // Если вариация выключена, вернуть корзину без изменения.
+        if ($variation->disabled_at) {
+            return $cart;
+        }
         $oldQuantity = DB::table("cart_product_variation")
             ->select("quantity")
             ->where("cart_id", $cart->id)
