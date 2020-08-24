@@ -4,6 +4,7 @@ namespace PortedCheese\VariationCart\Helpers;
 
 use App\Cart;
 use App\ProductVariation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,59 @@ use Illuminate\Support\Facades\Log;
 
 class CartActionsManager
 {
+    /**
+     * Удалить из корзины.
+     *
+     * @param ProductVariation $variation
+     */
+    public function deleteItem(ProductVariation $variation)
+    {
+        $cart = $this->getCart();
+        if (! $cart) {
+            return;
+        }
+        $cart->variations()->detach($variation);
+    }
+
+    /**
+     * Позиции корзины.
+     *
+     * @param Cart|null $cart
+     * @return array|bool
+     */
+    public function getCartItems(Cart $cart = null)
+    {
+        if (empty($cart)) {
+            $cart = $this->getCart();
+        }
+        if (! $cart) {
+            return false;
+        }
+        $items = [];
+        $collection = $cart->variations()
+            ->with("product", "product.cover")
+            ->get();
+        foreach ($collection as $variation) {
+            $product = $variation->product;
+            $pivot = $variation->pivot;
+            $items[] = [
+                "cover" => $product->cover,
+                "product" => $product,
+                "title" => $product->title,
+                "variation" => $variation,
+                "quantity" => $pivot->quantity,
+            ];
+        }
+        $sorted = array_values(Arr::sort($items, function ($value) {
+            return $value["title"];
+        }));
+        $objects = [];
+        foreach ($sorted as $item) {
+            $objects[] = (object) $item;
+        }
+        return $objects;
+    }
+
     /**
      * Получить краткую информацию о корзине.
      *

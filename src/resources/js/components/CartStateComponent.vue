@@ -1,5 +1,5 @@
 <template>
-    <a href="#" :class="baseClass" class="cart-state">
+    <a :href="cartUrl" :class="baseClass" class="cart-state">
         <span class="cart-state__cover">
             <svg class="cart-state__ico">
                 <use xlink:href="#cart-ico"></use>

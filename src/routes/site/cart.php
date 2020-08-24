@@ -10,4 +10,8 @@ Route::group([
 ], function () {
     Route::put("/add/{variation}", "CartController@addToCart")
         ->name("add");
+    Route::get("/", "CartController@index")
+        ->name("index");
+    Route::delete("/{variation}", "CartController@deleteItem")
+        ->name("delete");
 });

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Facade;
 use PortedCheese\VariationCart\Helpers\CartActionsManager;
 
 /**
+ * @method static deleteItem(ProductVariation $variation)
+ * @method static array|bool getCartItems(Cart $cart = null)
  * @method static object getCartInfo(Cart $cart = null)
  * @method static Cart addToCart(ProductVariation $variation, $quantity = 1)
  * @method static recalculateTotal(Cart $cart)
