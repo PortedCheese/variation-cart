@@ -77,7 +77,8 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
     protected $vueIncludes = [
         'admin' => [],
         'app' => [
-            "add-to-cart" => "AddVariationsToCartComponent"
+            "add-to-cart" => "AddVariationsToCartComponent",
+            "cart-state" => "CartStateComponent",
         ],
     ];
 
@@ -100,7 +101,9 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
      * @var array 
      */
     protected $scssIncludes = [
-        "app" => [],
+        "app" => [
+            "variation-cart/cart-state",
+        ],
         "admin" => [],
     ];
 
@@ -144,7 +147,7 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
         }
 
         if ($this->option("scss") || $all) {
-//            $this->makeScssIncludes("app");
+            $this->makeScssIncludes("app");
 //            $this->makeScssIncludes("admin");
         }
     }

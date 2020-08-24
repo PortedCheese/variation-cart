@@ -1,0 +1,22 @@
+.cart-state {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  &.nav-link {
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 100%;
+  }
+
+  &__ico {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+  }
+
+  &__title {
+    padding-left: .25rem;
+  }
+}

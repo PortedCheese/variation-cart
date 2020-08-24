@@ -35,11 +35,15 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Assets.
         $this->publishes([
-            __DIR__ . "/resources/js/components" => resource_path("js/components/vendor/variation-cart")
+            __DIR__ . "/resources/js/components" => resource_path("js/components/vendor/variation-cart"),
+            __DIR__ . "/resources/sass" => resource_path("sass/vendor/variation-cart")
         ], "public");
 
         // Наблюдатели.
         $this->addObservers();
+
+        // Расширить конфиг сайта.
+        $this->extendConfigVariables();
     }
 
     public function register()
@@ -51,6 +55,17 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         // Facades.
         $this->initFacades();
+    }
+
+    /**
+     * Расширить настройки.
+     */
+    protected function extendConfigVariables()
+    {
+        // SVG.
+        $svg = app()->config["theme.configSvg"];
+        $svg[] = "variation-cart::site.includes.svg";
+        app()->config["theme.configSvg"] = $svg;
     }
 
     /**

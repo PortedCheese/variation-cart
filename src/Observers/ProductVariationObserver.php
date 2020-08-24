@@ -24,4 +24,14 @@ class ProductVariationObserver
             }
         }
     }
+
+    /**
+     * После удаления.
+     *
+     * @param ProductVariation $variation
+     */
+    public function deleted(ProductVariation $variation)
+    {
+        $variation->carts()->sync([]);
+    }
 }

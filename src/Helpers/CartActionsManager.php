@@ -12,6 +12,29 @@ use Illuminate\Support\Facades\Log;
 class CartActionsManager
 {
     /**
+     * Получить краткую информацию о корзине.
+     *
+     * @return object
+     */
+    public function getCartInfo()
+    {
+        $cart = $this->getCart();
+        if ($cart) {
+            $data = [
+                "total" => $cart->total,
+                "count" => $cart->variations()->count(),
+            ];
+        }
+        else {
+            $data = [
+                "total" => 0,
+                "count" => 0,
+            ];
+        }
+        return (object) $data;
+    }
+
+    /**
      * Добавить в корзину.
      *
      * @param ProductVariation $variation

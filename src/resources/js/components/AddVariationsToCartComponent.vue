@@ -122,12 +122,18 @@
                         }
                     })
                     .catch(error => {
-                        let data = error.response.data;
-                        if (data.hasOwnProperty("errors")) {
-                            this.errors = data.errors;
+                        let response = error.response;
+                        let data = response.data;
+                        if (response.status === 404) {
+                            this.errors.push(["404 Не найдено"]);
                         }
                         else {
-                            this.errors.push([data.message]);
+                            if (data.hasOwnProperty("errors")) {
+                                this.errors = data.errors;
+                            }
+                            else {
+                                this.errors.push([data.message]);
+                            }
                         }
                     })
                     .finally(() => {
