@@ -6,7 +6,6 @@ use App\Cart;
 use App\ProductVariation;
 use Illuminate\Support\Facades\Facade;
 use PortedCheese\VariationCart\Helpers\CartActionsManager;
-use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @method static Cart initCart()
@@ -15,7 +14,6 @@ use Illuminate\Database\Eloquent\Collection;
  *
  * @method static object getCartInfo(Cart $cart = null)
  * @method static array|bool getCartItems(Cart $cart = null)
- * @method static Collection getCartVariationsWithProducts(Cart $cart)
  *
  * @method static Cart addToCart(ProductVariation $variation, $quantity = 1)
  * @method static Cart changeQuantity(ProductVariation $variation, $quantity = 1, Cart $customCart = null)

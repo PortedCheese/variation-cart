@@ -59,12 +59,15 @@ class CartActionsManager
             $cart = $this->getCart();
         }
         if ($cart) {
-            $data = [
-                "total" => $cart->total,
-                "count" => $cart->count,
-                "saleLess" => $cart->sale_less,
-                "discount" => $cart->discount,
-            ];
+            $key = "cartInfo:{$cart->id}";
+            $data = Cache::rememberForever($key, function () use ($cart) {
+                return [
+                    "total" => (float) $cart->total,
+                    "count" => $cart->count,
+                    "saleLess" => $cart->sale_less,
+                    "discount" => $cart->discount,
+                ];
+            });
         }
         else {
             $data = [
@@ -92,7 +95,10 @@ class CartActionsManager
             return false;
         }
         $items = [];
-        $collection = $this->getCartVariationsWithProducts($cart);
+        $collection = $cart->variations()
+            ->with("product", "product.cover")
+            ->orderBy("price")
+            ->get();
         foreach ($collection as $variation) {
             $product = $variation->product;
             $pivot = $variation->pivot;
@@ -106,23 +112,6 @@ class CartActionsManager
             ];
         }
         return $items;
-    }
-
-    /**
-     * Вариации корзины с товарами.
-     *
-     * @param Cart $cart
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getCartVariationsWithProducts(Cart $cart)
-    {
-        $key = "cartVariationsWithProducts:{$cart->id}";
-        return Cache::rememberForever($key, function () use ($cart) {
-            return $cart->variations()
-                ->with("product", "product.cover")
-                ->orderBy("price")
-                ->get();
-        });
     }
 
     /**
@@ -231,7 +220,7 @@ class CartActionsManager
         }
 
         $cartId = $cart->id;
-        Cache::forget("cartVariationsWithProducts:{$cartId}");
+        Cache::forget("cartInfo:{$cartId}");
     }
 
     /**

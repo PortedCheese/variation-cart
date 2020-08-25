@@ -66,8 +66,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         // Информация о корзине.
         view()->composer("variation-cart::site.includes.cart-state", function (View $view) {
             $cartInfo = variation_cart()->getCartInfo();
-            $view->with("total", $cartInfo->total);
-            $view->with("count", $cartInfo->count);
+            debugbar()->info($cartInfo);
+            $view->with("cartInfo", $cartInfo);
         });
     }
 
