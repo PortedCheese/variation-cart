@@ -8,15 +8,19 @@ use Illuminate\Support\Facades\Facade;
 use PortedCheese\VariationCart\Helpers\CartActionsManager;
 
 /**
- * @method static deleteItem(ProductVariation $variation)
- * @method static array|bool getCartItems(Cart $cart = null)
- * @method static object getCartInfo(Cart $cart = null)
- * @method static Cart addToCart(ProductVariation $variation, $quantity = 1)
- * @method static Cart changeQuantity(ProductVariation $variation, $quantity = 1, Cart $customCart = null)
- * @method static recalculateTotal(Cart $cart)
- * @method static setCookie(Cart $cart)
  * @method static Cart initCart()
  * @method static Cart|bool getCart()
+ * @method static setCookie(Cart $cart)
+ *
+ * @method static object getCartInfo(Cart $cart = null)
+ * @method static array|bool getCartItems(Cart $cart = null)
+ *
+ * @method static Cart addToCart(ProductVariation $variation, $quantity = 1)
+ * @method static Cart changeQuantity(ProductVariation $variation, $quantity = 1, Cart $customCart = null)
+ * @method static deleteItem(ProductVariation $variation)
+ *
+ * @method static recalculateTotal(Cart $cart)
+ * @method static clearCartCache(Cart $cart)
  *
  * @see CartActionsManager
  */

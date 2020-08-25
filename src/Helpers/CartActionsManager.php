@@ -4,6 +4,7 @@ namespace PortedCheese\VariationCart\Helpers;
 
 use App\Cart;
 use App\ProductVariation;
+use Illuminate\Support\Facades\Cache;
 use PortedCheese\ProductVariation\Http\Resources\ProductVariation as VariationResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -14,17 +15,66 @@ use Illuminate\Support\Facades\Log;
 class CartActionsManager
 {
     /**
-     * Удалить из корзины.
-     *
-     * @param ProductVariation $variation
+     * @return Cart
      */
-    public function deleteItem(ProductVariation $variation)
+    public function initCart()
     {
         $cart = $this->getCart();
-        if (! $cart) {
-            return;
+        if ($cart) return $cart;
+        return Cart::create([]);
+    }
+
+    /**
+     * Найти корзину.
+     *
+     * @return Cart|bool
+     */
+    public function getCart()
+    {
+        $cart = $this->findCartByCookie();
+        if ($cart) return $cart;
+        return $this->findCartByAuth();
+    }
+
+    /**
+     * Поставить куку.
+     *
+     * @param Cart $cart
+     */
+    public function setCookie(Cart $cart)
+    {
+        $cookie = Cookie::make("cartUuid", $cart->uuid, 60*24*30);
+        Cookie::queue($cookie);
+    }
+
+    /**
+     * Получить краткую информацию о корзине.
+     *
+     * @param Cart|null $cart
+     * @return object
+     */
+    public function getCartInfo(Cart $cart = null)
+    {
+        if (empty($cart)) {
+            $cart = $this->getCart();
         }
-        $cart->variations()->detach($variation);
+        if ($cart) {
+            $data = [
+                "total" => $cart->total,
+                "count" => $cart->count,
+                "saleLess" => $cart->sale_less,
+                "discount" => $cart->discount,
+            ];
+        }
+        else {
+            $data = [
+                "total" => 0,
+                "count" => 0,
+                "saleLess" => 0,
+                "discount" => 0,
+            ];
+        }
+        return (object) $data;
     }
 
     /**
@@ -59,36 +109,6 @@ class CartActionsManager
             ];
         }
         return $items;
-    }
-
-    /**
-     * Получить краткую информацию о корзине.
-     *
-     * @param Cart|null $cart
-     * @return object
-     */
-    public function getCartInfo(Cart $cart = null)
-    {
-        if (empty($cart)) {
-            $cart = $this->getCart();
-        }
-        if ($cart) {
-            $data = [
-                "total" => $cart->total,
-                "count" => $cart->count,
-                "saleLess" => $cart->sale_less,
-                "discount" => $cart->discount,
-            ];
-        }
-        else {
-            $data = [
-                "total" => 0,
-                "count" => 0,
-                "saleLess" => 0,
-                "discount" => 0,
-            ];
-        }
-        return (object) $data;
     }
 
     /**
@@ -151,6 +171,21 @@ class CartActionsManager
     }
 
     /**
+     * Удалить из корзины.
+     *
+     * @param ProductVariation $variation
+     */
+    public function deleteItem(ProductVariation $variation)
+    {
+        $cart = $this->getCart();
+        if (! $cart) {
+            return;
+        }
+        $cart->variations()->detach($variation);
+        $this->recalculateTotal($cart);
+    }
+
+    /**
      * Пересчитать корзину.
      *
      * @param Cart $cart
@@ -167,36 +202,18 @@ class CartActionsManager
     }
 
     /**
-     * Поставить куку.
+     * Очистить кэш корзины.
      *
      * @param Cart $cart
      */
-    public function setCookie(Cart $cart)
+    public function clearCartCache(Cart $cart)
     {
-        $cookie = Cookie::make("cartUuid", $cart->uuid, 60*24*30);
-        Cookie::queue($cookie);
-    }
-
-    /**
-     * @return Cart
-     */
-    public function initCart()
-    {
-        $cart = $this->getCart();
-        if ($cart) return $cart;
-        return Cart::create([]);
-    }
-
-    /**
-     * Найти корзину.
-     *
-     * @return Cart|bool
-     */
-    public function getCart()
-    {
-        $cart = $this->findCartByCookie();
-        if ($cart) return $cart;
-        return $this->findCartByAuth();
+        $uuid = $cart->uuid;
+        $userId = $cart->user_id;
+        Cache::forget("cartByUuid:{$uuid}");
+        if (! empty($userId)) {
+            Cache::forget("cartByUserId:{$userId}");
+        }
     }
 
     /**
@@ -273,14 +290,17 @@ class CartActionsManager
      */
     protected function findCartByUserId($id)
     {
-        try {
-            return Cart::query()
-                ->where("user_id", $id)
-                ->firstOrFail();
-        }
-        catch (\Exception $exception) {
-            return false;
-        }
+        $key = "cartByUserId:{$id}";
+        return Cache::rememberForever($key, function () use ($id) {
+            try {
+                return Cart::query()
+                    ->where("user_id", $id)
+                    ->firstOrFail();
+            }
+            catch (\Exception $exception) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -291,13 +311,16 @@ class CartActionsManager
      */
     protected function findCartByUuid($uuid)
     {
-        try {
-            return Cart::query()
-                ->where("uuid", $uuid)
-                ->firstOrFail();
-        }
-        catch (\Exception $exception) {
-            return false;
-        }
+        $key = "cartByUuid:{$uuid}";
+        return Cache::rememberForever($key, function () use ($uuid) {
+            try {
+                return Cart::query()
+                    ->where("uuid", $uuid)
+                    ->firstOrFail();
+            }
+            catch (\Exception $exception) {
+                return false;
+            }
+        });
     }
 }

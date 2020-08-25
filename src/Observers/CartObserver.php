@@ -40,6 +40,7 @@ class CartObserver
     public function updated(Cart $cart)
     {
         CartActions::setCookie($cart);
+        CartActions::clearCartCache($cart);
     }
 
     /**
@@ -50,5 +51,6 @@ class CartObserver
     public function deleting(Cart $cart)
     {
         $cart->variations()->sync([]);
+        CartActions::clearCartCache($cart);
     }
 }
