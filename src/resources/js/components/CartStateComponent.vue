@@ -23,16 +23,9 @@
                 default: "nav-link"
             },
 
-            cartTotal: {
-                type: Number,
-                required: false,
-                default: 0
-            },
-
-            cartCount: {
-                type: Number,
-                required: false,
-                default: 0
+            cartData: {
+                type: Object,
+                required: true
             },
 
             cartUrl: {
@@ -49,8 +42,8 @@
         },
 
         created() {
-            this.total = this.cartTotal;
-            this.count = this.cartCount;
+            this.total = this.cartData.total;
+            this.count = this.cartData.count;
         },
 
         mounted() {

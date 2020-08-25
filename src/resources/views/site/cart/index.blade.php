@@ -15,17 +15,12 @@
             </div>
         </div>
         <div class="col-12 col-md-4 col-lg-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Ваша корзина</h5>
-                </div>
-                <div class="card-body">
-                    Info
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary btn-block">Перейти к оформлению</a>
-                </div>
-            </div>
+            <cart-info :init-cart="{{ json_encode($cart) }}"
+                       checkout-url="{{ route("catalog.cart.checkout") }}"
+                       @if (config("variation-cart.showCartDiscount"))
+                       :show-discount="true"
+                       @endif>
+            </cart-info>
         </div>
         @else
             <div class="col-12">

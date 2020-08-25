@@ -16,4 +16,6 @@ Route::group([
         ->name("delete");
     Route::put("/{variation}", "CartController@changeQuantity")
         ->name("update");
+    Route::get("/checkout", "CartController@checkout")
+        ->name("checkout");
 });
