@@ -3,6 +3,7 @@
 namespace PortedCheese\VariationCart\Facades;
 
 use App\Cart;
+use App\Order;
 use App\ProductVariation;
 use Illuminate\Support\Facades\Facade;
 use PortedCheese\VariationCart\Helpers\CartActionsManager;
@@ -18,6 +19,9 @@ use PortedCheese\VariationCart\Helpers\CartActionsManager;
  * @method static Cart addToCart(ProductVariation $variation, $quantity = 1)
  * @method static Cart changeQuantity(ProductVariation $variation, $quantity = 1, Cart $customCart = null)
  * @method static deleteItem(ProductVariation $variation)
+ * @method static clearCart(Cart $cart)
+ *
+ * @method static Order makeOrder(Cart $cart, array $userData)
  *
  * @method static recalculateTotal(Cart $cart)
  * @method static clearCartCache(Cart $cart)

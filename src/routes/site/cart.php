@@ -18,4 +18,8 @@ Route::group([
         ->name("update");
     Route::get("/checkout", "CartController@checkout")
         ->name("checkout");
+    Route::post("/checkout", "CartController@submit")
+        ->name("order");
+    Route::get("/complete/{order}/{check}", "CartController@completePage")
+        ->name("complete");
 });

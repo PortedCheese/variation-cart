@@ -3,8 +3,11 @@
 namespace PortedCheese\VariationCart\Helpers;
 
 use App\Cart;
+use App\Order;
 use App\ProductVariation;
 use Illuminate\Support\Facades\Cache;
+use PortedCheese\ProductVariation\Events\CreateNewOrder;
+use PortedCheese\ProductVariation\Facades\OrderActions;
 use PortedCheese\ProductVariation\Http\Resources\ProductVariation as VariationResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -186,6 +189,42 @@ class CartActionsManager
         }
         $cart->variations()->detach($variation);
         $this->recalculateTotal($cart);
+    }
+
+    /**
+     * Очистить корзину.
+     *
+     * @param Cart $cart
+     */
+    public function clearCart(Cart $cart)
+    {
+        foreach ($cart->variations as $variation) {
+            $cart->variations()->detach($variation);
+        }
+        $this->recalculateTotal($cart);
+    }
+
+    /**
+     * Создать заказ.
+     *
+     * @param Cart $cart
+     * @param array $userData
+     * @return mixed
+     */
+    public function makeOrder(Cart $cart, array $userData)
+    {
+        $order = Order::create([
+            "user_data" => $userData,
+        ]);
+        $items = $this->getCartItems($cart);
+        $variations = [];
+        foreach ($items as $item) {
+            $variations[$item->variation->id] = $item->variation->pivot->quantity;
+        }
+        OrderActions::addVariationsToOrder($order, $variations);
+        $this->clearCart($cart);
+        event(new CreateNewOrder($order));
+        return $order;
     }
 
     /**
