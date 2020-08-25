@@ -4,6 +4,7 @@ namespace PortedCheese\VariationCart\Models;
 
 use App\ProductVariation;
 use Illuminate\Database\Eloquent\Model;
+use PortedCheese\VariationCart\Facades\CartActions;
 
 class Cart extends Model
 {
@@ -29,7 +30,7 @@ class Cart extends Model
     public function getCountAttribute()
     {
         $count = 0;
-        foreach ($this->variations as $variation) {
+        foreach (CartActions::getCartVariationsWithProducts($this) as $variation) {
             $pivot = $variation->pivot;
             $count += $pivot->quantity;
         }
@@ -59,7 +60,7 @@ class Cart extends Model
     public function getSaleLessAttribute()
     {
         $price = 0;
-        foreach ($this->variations as $variation) {
+        foreach (CartActions::getCartVariationsWithProducts($this) as $variation) {
             $pivot = $variation->pivot;
             $quantity = $pivot->quantity;
             if ($variation->sale) {
@@ -96,7 +97,7 @@ class Cart extends Model
     public function getDiscountAttribute()
     {
         $price = 0;
-        foreach ($this->variations as $variation) {
+        foreach (CartActions::getCartVariationsWithProducts($this) as $variation) {
             $pivot = $variation->pivot;
             $quantity = $pivot->quantity;
             $price += $variation->discount * $quantity;

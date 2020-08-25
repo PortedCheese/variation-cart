@@ -92,10 +92,7 @@ class CartActionsManager
             return false;
         }
         $items = [];
-        $collection = $cart->variations()
-            ->with("product", "product.cover")
-            ->orderBy("price")
-            ->get();
+        $collection = $this->getCartVariationsWithProducts($cart);
         foreach ($collection as $variation) {
             $product = $variation->product;
             $pivot = $variation->pivot;
@@ -109,6 +106,23 @@ class CartActionsManager
             ];
         }
         return $items;
+    }
+
+    /**
+     * Вариации корзины с товарами.
+     *
+     * @param Cart $cart
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getCartVariationsWithProducts(Cart $cart)
+    {
+        $key = "cartVariationsWithProducts:{$cart->id}";
+        return Cache::rememberForever($key, function () use ($cart) {
+            return $cart->variations()
+                ->with("product", "product.cover")
+                ->orderBy("price")
+                ->get();
+        });
     }
 
     /**
@@ -209,11 +223,15 @@ class CartActionsManager
     public function clearCartCache(Cart $cart)
     {
         $uuid = $cart->uuid;
-        $userId = $cart->user_id;
         Cache::forget("cartByUuid:{$uuid}");
+
+        $userId = $cart->user_id;
         if (! empty($userId)) {
             Cache::forget("cartByUserId:{$userId}");
         }
+
+        $cartId = $cart->id;
+        Cache::forget("cartVariationsWithProducts:{$cartId}");
     }
 
     /**
