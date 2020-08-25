@@ -7,6 +7,7 @@ use App\ProductVariation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PortedCheese\VariationCart\Facades\CartActions;
+use PortedCheese\ProductVariation\Http\Resources\ProductVariation as VariationResource;
 
 class CartController extends Controller
 {
@@ -18,8 +19,9 @@ class CartController extends Controller
      */
     public function index(Request $request)
     {
-        $cart = CartActions::getCartItems();
-        return view("variation-cart::site.cart.index", compact("cart"));
+        $cartItems = CartActions::getCartItems();
+        $cart = CartActions::getCartInfo();
+        return view("variation-cart::site.cart.index", compact("cart", "cartItems"));
     }
 
     /**
@@ -55,7 +57,7 @@ class CartController extends Controller
             ->json([
                 "success" => $result["success"],
                 "message" => $result["message"],
-                "cart" => variation_cart()->getCartInfo($cart)
+                "cart" => CartActions::getCartInfo($cart)
             ]);
     }
 
@@ -63,6 +65,44 @@ class CartController extends Controller
      * @param $data
      */
     protected function addToCartValidator($data)
+    {
+        Validator::make($data, [
+            "quantity" => ["required", "numeric", "min:1"],
+        ], [], [
+            "quantity" => "Количество",
+        ])->validate();
+    }
+
+    /**
+     * Изменить количество.
+     *
+     * @param Request $request
+     * @param ProductVariation $variation
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeQuantity(Request $request, ProductVariation $variation)
+    {
+        $this->changeQuantityValidator($request->all());
+        $quantity = $request->get("quantity");
+        $cart = CartActions::changeQuantity($variation, $quantity);
+        $result = session()->pull("addToCartResult", [
+            "success" => true,
+            "message" => "Количество изменено"
+        ]);
+
+        return response()
+            ->json([
+                "success" => $result["success"],
+                "message" => $result["message"],
+                "cart" => CartActions::getCartInfo($cart),
+                "variation" => new VariationResource($variation),
+            ]);
+    }
+
+    /**
+     * @param $data
+     */
+    protected function changeQuantityValidator($data)
     {
         Validator::make($data, [
             "quantity" => ["required", "numeric", "min:1"],

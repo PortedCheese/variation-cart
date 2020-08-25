@@ -10,33 +10,7 @@
         <div class="col-12 col-md-8 col-lg-9 mb-3">
             <div class="card">
                 <div class="card-body">
-                    @foreach ($cart as $item)
-                        @php($border = ! $loop->last)
-                        <div id="variation-{{ $item->variation->id }}" class="row{{ $border ? " border-bottom" : "" }}">
-                            <div class="col-12">
-                                @if ($item->cover)
-                                    @img([
-                                        "image" => $item->cover,
-                                        "template" => "small",
-                                        "lightbox" => "image-{$item->variation->id}",
-                                        "imgClass" => "img-fluid",
-                                        "grid" => [],
-                                    ])
-                                @endif
-                                <a href="{{ route("catalog.products.show", ["product" => $item->product]) }}">
-                                    {{ $item->product->title }}
-                                </a>
-                                <div>{{ $item->variation->description }}</div>
-                                <div>
-                                    <form action="{{ route("catalog.cart.delete", ["variation" => $item->variation]) }}" method="post">
-                                        @csrf
-                                        @method("delete")
-                                        <button type="submit" class="btn btn-link">Удалить</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                    @include("variation-cart::site.cart.includes.item-list")
                 </div>
             </div>
         </div>

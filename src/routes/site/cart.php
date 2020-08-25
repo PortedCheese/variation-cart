@@ -14,4 +14,6 @@ Route::group([
         ->name("index");
     Route::delete("/{variation}", "CartController@deleteItem")
         ->name("delete");
+    Route::put("/{variation}", "CartController@changeQuantity")
+        ->name("update");
 });

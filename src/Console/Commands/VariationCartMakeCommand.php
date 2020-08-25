@@ -79,6 +79,7 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
         'app' => [
             "add-to-cart" => "AddVariationsToCartComponent",
             "cart-state" => "CartStateComponent",
+            "cart-change-quantity" => "ChangeItemQuantityComponent",
         ],
     ];
 

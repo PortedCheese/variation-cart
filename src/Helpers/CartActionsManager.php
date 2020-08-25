@@ -4,6 +4,7 @@ namespace PortedCheese\VariationCart\Helpers;
 
 use App\Cart;
 use App\ProductVariation;
+use PortedCheese\ProductVariation\Http\Resources\ProductVariation as VariationResource;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -43,31 +44,27 @@ class CartActionsManager
         $items = [];
         $collection = $cart->variations()
             ->with("product", "product.cover")
+            ->orderBy("price")
             ->get();
         foreach ($collection as $variation) {
             $product = $variation->product;
             $pivot = $variation->pivot;
-            $items[] = [
+            $items[] = (object) [
                 "cover" => $product->cover,
                 "product" => $product,
                 "title" => $product->title,
                 "variation" => $variation,
+                "variationData" => new VariationResource($variation),
                 "quantity" => $pivot->quantity,
             ];
         }
-        $sorted = array_values(Arr::sort($items, function ($value) {
-            return $value["title"];
-        }));
-        $objects = [];
-        foreach ($sorted as $item) {
-            $objects[] = (object) $item;
-        }
-        return $objects;
+        return $items;
     }
 
     /**
      * Получить краткую информацию о корзине.
      *
+     * @param Cart|null $cart
      * @return object
      */
     public function getCartInfo(Cart $cart = null)
@@ -78,13 +75,17 @@ class CartActionsManager
         if ($cart) {
             $data = [
                 "total" => $cart->total,
-                "count" => $this->getCartCount($cart),
+                "count" => $cart->count,
+                "saleLess" => $cart->sale_less,
+                "discount" => $cart->discount,
             ];
         }
         else {
             $data = [
                 "total" => 0,
                 "count" => 0,
+                "saleLess" => 0,
+                "discount" => 0,
             ];
         }
         return (object) $data;
@@ -100,12 +101,7 @@ class CartActionsManager
      */
     public function addToCart(ProductVariation $variation, $quantity = 1, Cart $customCart = null)
     {
-        if ($customCart) {
-            $cart = $customCart;
-        }
-        else {
-            $cart = $this->initCart();
-        }
+        $cart = $customCart ?? $this->initCart();
         // Если вариация выключена, вернуть корзину без изменения.
         if ($variation->disabled_at) {
             session()->flash("addToCartResult", [
@@ -121,6 +117,31 @@ class CartActionsManager
             ->first();
         if ($oldQuantity) {
             $quantity += $oldQuantity->quantity;
+        }
+        $cart->variations()->syncWithoutDetaching([
+            $variation->id => ["quantity" => $quantity]
+        ]);
+        $this->recalculateTotal($cart);
+        return $cart;
+    }
+
+    /**
+     * Изменить количество.
+     *
+     * @param ProductVariation $variation
+     * @param int $quantity
+     * @param Cart|null $customCart
+     * @return Cart|bool
+     */
+    public function changeQuantity(ProductVariation $variation, $quantity = 1, Cart $customCart = null)
+    {
+        $cart = $customCart ?? $this->initCart();
+        if (! $cart) {
+            session()->flash("changeQuantityResult", [
+                "success" => false,
+                "message" => "Корзина не найдена",
+            ]);
+            return $cart;
         }
         $cart->variations()->syncWithoutDetaching([
             $variation->id => ["quantity" => $quantity]
@@ -176,22 +197,6 @@ class CartActionsManager
         $cart = $this->findCartByCookie();
         if ($cart) return $cart;
         return $this->findCartByAuth();
-    }
-
-    /**
-     * Вычислить количество в корзине.
-     *
-     * @param Cart $cart
-     * @return int
-     */
-    protected function getCartCount(Cart $cart)
-    {
-        $count = 0;
-        foreach ($cart->variations as $variation) {
-            $pivot = $variation->pivot;
-            $count += $pivot->quantity;
-        }
-        return $count;
     }
 
     /**

@@ -12,6 +12,7 @@ use PortedCheese\VariationCart\Helpers\CartActionsManager;
  * @method static array|bool getCartItems(Cart $cart = null)
  * @method static object getCartInfo(Cart $cart = null)
  * @method static Cart addToCart(ProductVariation $variation, $quantity = 1)
+ * @method static Cart changeQuantity(ProductVariation $variation, $quantity = 1, Cart $customCart = null)
  * @method static recalculateTotal(Cart $cart)
  * @method static setCookie(Cart $cart)
  * @method static Cart initCart()

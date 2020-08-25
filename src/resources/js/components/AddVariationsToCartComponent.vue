@@ -1,6 +1,6 @@
 <template>
     <div class="col-12">
-        <form>
+        <form v-if="variations.length">
             <product-variations :variations="variations" v-model="chosenVariation" @change="resetData"></product-variations>
 
             <div>
