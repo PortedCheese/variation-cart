@@ -5,4 +5,5 @@ return [
     "cartSiteRoutes" => true,
     "showCartIco" => true,
     "showCartDiscount" => true,
+    "enableCart" => true,
 ];

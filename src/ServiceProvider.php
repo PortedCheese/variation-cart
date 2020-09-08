@@ -28,11 +28,13 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             ]);
         }
 
-        // Подключение путей.
-        $this->addRoutes();
+        if (config("variation-cart.enableCart")) {
+            // Подключение путей.
+            $this->addRoutes();
 
-        // Подключение шаблонов.
-        $this->loadViewsFrom(__DIR__ . "/resources/views", "variation-cart");
+            // Подключение шаблонов.
+            $this->loadViewsFrom(__DIR__ . "/resources/views", "variation-cart");
+        }
 
         // Assets.
         $this->publishes([
