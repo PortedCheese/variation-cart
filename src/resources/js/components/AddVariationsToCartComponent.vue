@@ -1,25 +1,10 @@
 <template>
-    <div class="col-12">
-        <form v-if="variations.length">
-            <product-variations :variations="variations" v-model="chosenVariation" @change="resetData"></product-variations>
+    <form v-if="variations.length">
+        <product-variations :variations="variations" v-model="chosenVariation" @change="resetData"></product-variations>
 
-            <div>
-                <div class="alert alert-danger" role="alert" v-if="Object.keys(errors).length">
-                    <template v-for="field in errors">
-                        <template v-for="error in field">
-                            <span>{{ error }}</span>
-                            <br>
-                        </template>
-                    </template>
-                </div>
-                <div class="alert alert-success" role="alert" v-if="Object.keys(messages).length">
-                    <template v-for="message in messages">
-                        <span>{{ message }}</span>
-                        <br>
-                    </template>
-                </div>
-
-                <button class="btn btn-outline-secondary"
+        <div class="product-add-to-cart">
+            <div class="choose-quantity product-add-to-cart__quantity">
+                <button class="btn choose-quantity__decrease"
                         type="button"
                         :disabled="quantity <= 1"
                         @click="decreaseQuantity">
@@ -27,24 +12,43 @@
                 </button>
                 <input type="number"
                        aria-label="Количество"
-                       class="form-control"
+                       class="form-control choose-quantity__input"
                        min="1"
                        v-model="quantity">
-                <button class="btn btn-outline-secondary"
+                <button class="btn choose-quantity__increase"
                         type="button"
                         @click="increaseQuantity">
                     <i class="fas fa-plus"></i>
                 </button>
-
-                <button type="button"
-                        @click="addToCard"
-                        :disabled="loading || quantity < 1 || ! variationData"
-                        class="btn btn-primary">
-                    Добавить в корзину
-                </button>
             </div>
-        </form>
-    </div>
+
+            <a :href="cartUrl" v-if="toCart" class="btn btn-outline-primary">
+                Перейти в корзину
+            </a>
+            <button type="button"
+                    v-else
+                    @click="addToCard"
+                    :disabled="loading || quantity < 1 || ! variationData"
+                    class="btn btn-primary product-add-to-cart__btn">
+                Купить
+            </button>
+        </div>
+
+        <div class="alert alert-danger" role="alert" v-if="Object.keys(errors).length">
+            <template v-for="field in errors">
+                <template v-for="error in field">
+                    <span>{{ error }}</span>
+                    <br>
+                </template>
+            </template>
+        </div>
+        <div class="alert alert-success" role="alert" v-if="Object.keys(messages).length">
+            <template v-for="message in messages">
+                <span>{{ message }}</span>
+                <br>
+            </template>
+        </div>
+    </form>
 </template>
 
 <script>
@@ -61,6 +65,10 @@
             variations: {
                 type: Array,
                 required: true
+            },
+            cartUrl: {
+                type: String,
+                required: true
             }
         },
 
@@ -71,6 +79,7 @@
                 messages: [],
                 errors: [],
                 quantity: 1,
+                toCart: false,
             }
         },
 
@@ -93,14 +102,21 @@
                 this.messages = [];
                 this.errors = [];
                 this.quantity = 1;
+                this.toCart = false;
             },
 
             increaseQuantity() {
                 this.quantity++;
+                this.toCart = false;
+                this.messages = [];
+                this.errors = [];
             },
 
             decreaseQuantity() {
                 this.quantity--;
+                this.toCart = false;
+                this.messages = [];
+                this.errors = [];
             },
 
             addToCard() {
@@ -116,6 +132,7 @@
                         if (result.success) {
                             this.quantity = 1;
                             this.messages.push(result.message);
+                            this.toCart = true;
                         }
                         else {
                             this.errors.push([result.message]);

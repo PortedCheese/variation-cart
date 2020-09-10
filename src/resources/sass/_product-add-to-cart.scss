@@ -1,0 +1,12 @@
+.product-add-to-cart {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: $grid-gutter-width / 2;
+
+  &__quantity {
+    margin-right: $grid-gutter-width;
+    max-width: 150px;
+  }
+}

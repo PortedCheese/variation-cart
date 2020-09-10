@@ -106,6 +106,8 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
     protected $scssIncludes = [
         "app" => [
             "variation-cart/cart-state",
+            "variation-cart/choose-quantity",
+            "variation-cart/product-add-to-cart",
         ],
         "admin" => [],
     ];

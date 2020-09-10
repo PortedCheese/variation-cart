@@ -1,0 +1,36 @@
+.choose-quantity {
+  position: relative;
+  &__decrease,
+  &__increase {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: $white;
+    border: $input-border-width solid $input-border-color;
+    @include hover-focus() {
+      box-shadow: none;
+    }
+    @include hover() {
+      color: $primary;
+    }
+  }
+
+  &__decrease {
+    left: 0;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &__increase {
+    right: 0;
+    border-left: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &__input {
+    text-align: center;
+    padding-right: 0;
+  }
+}
