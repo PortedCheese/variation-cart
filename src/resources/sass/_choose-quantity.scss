@@ -7,6 +7,8 @@
     bottom: 0;
     background-color: $white;
     border: $input-border-width solid $input-border-color;
+    font-size: .625rem;
+    padding: .5rem;
     @include hover-focus() {
       box-shadow: none;
     }
@@ -20,6 +22,7 @@
     border-right: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+    padding-right: 0;
   }
 
   &__increase {
@@ -27,10 +30,17 @@
     border-left: none;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+    padding-left: 0;
   }
 
   &__input {
     text-align: center;
-    padding-right: 0;
+    //padding-right: 0;
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   }
 }

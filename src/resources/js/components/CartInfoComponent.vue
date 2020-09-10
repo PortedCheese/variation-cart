@@ -8,16 +8,19 @@
         </div>
         <div class="card-body">
             <div v-if="showDiscount">
-                Товары: {{ cart.saleLess }}
+                Товары: {{ cart.humanSaleLess }}
                 <br>
-                Скидка: {{ cart.discount }}
+                Скидка: {{ cart.humanDiscount }}
             </div>
             <div>
-                Общая стоимость {{ cart.total }}
+                Общая стоимость {{ cart.humanTotal }}
             </div>
         </div>
         <div class="card-footer">
-            <a :href="checkoutUrl" class="btn btn-primary btn-block">Перейти к оформлению</a>
+            <a :href="checkoutUrl" class="btn btn-primary btn-block">
+                <span class="d-block d-md-none d-xl-block">Перейти к оформлению</span>
+                <span class="d-none d-md-block d-xl-none">Оформить</span>
+            </a>
         </div>
     </div>
 </template>

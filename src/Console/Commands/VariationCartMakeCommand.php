@@ -108,6 +108,7 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
             "variation-cart/cart-state",
             "variation-cart/choose-quantity",
             "variation-cart/product-add-to-cart",
+            "variation-cart/cart-item",
         ],
         "admin" => [],
     ];

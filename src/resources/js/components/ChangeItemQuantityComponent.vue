@@ -1,46 +1,43 @@
 <template>
-    <form>
-        <div class="alert alert-danger" role="alert" v-if="Object.keys(errors).length">
-            <template v-for="field in errors">
-                <template v-for="error in field">
-                    <span>{{ error }}</span>
-                    <br>
-                </template>
-            </template>
-        </div>
-        <div class="alert alert-success" role="alert" v-if="Object.keys(messages).length">
-            <template v-for="message in messages">
-                <span>{{ message }}</span>
-                <br>
-            </template>
-        </div>
-
-        <div>
-            <span>{{ priceFormatted }} руб</span>
-            <del v-if="variation.sale">{{ saleFormatted }} руб</del>
-            <span class="text-danger" v-if="variation.sale && showDiscount">{{ discountFormatted }} руб</span>
+    <form class="cart-item__form">
+        <div class="cart-item__form-info">
+            <span class="cart-item__form-price">
+                {{ priceFormatted }} руб
+            </span>
+            <span class="cart-item__form-price cart-item__form-price_thin"
+                  v-if="variation.sale">
+                {{ saleFormatted }} руб
+            </span>
+            <span class="cart-item__form-price cart-item__form-price_discount"
+                  v-if="variation.sale && showDiscount">
+                Скидка -{{ discountFormatted }} руб
+            </span>
         </div>
 
-        <button class="btn btn-outline-secondary"
-                type="button"
-                :disabled="quantity <= 1 || loading"
-                @click="decreaseQuantity">
-            <i class="fas fa-minus"></i>
-        </button>
-        <input type="number"
-               aria-label="Количество"
-               class="form-control"
-               min="1"
-               @change.self="sendQuantity"
-               v-model.lazy="quantity">
-        <button class="btn btn-outline-secondary"
-                type="button"
-                :disabled="loading"
-                @click="increaseQuantity">
-            <i class="fas fa-plus"></i>
-        </button>
+        <div class="cart-item__form-quantity">
+            <div class="choose-quantity">
+                <button class="btn choose-quantity__decrease"
+                        type="button"
+                        :disabled="quantity <= 1 || loading"
+                        @click="decreaseQuantity">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <input type="number"
+                       aria-label="Количество"
+                       class="form-control choose-quantity__input"
+                       min="1"
+                       @change.self="sendQuantity"
+                       v-model.lazy="quantity">
+                <button class="btn choose-quantity__increase"
+                        type="button"
+                        :disabled="loading"
+                        @click="increaseQuantity">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
 
-        <div>{{ variation.human_price }} Руб / шт</div>
+            <div class="cart-item__form-price cart-item__form-price_thin">{{ variation.human_price }} Руб / шт</div>
+        </div>
     </form>
 </template>
 

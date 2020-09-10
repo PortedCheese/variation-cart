@@ -66,18 +66,24 @@ class CartActionsManager
             $data = Cache::rememberForever($key, function () use ($cart) {
                 return [
                     "total" => (float) $cart->total,
+                    "humanTotal" => $cart->human_total,
                     "count" => $cart->count,
                     "saleLess" => $cart->sale_less,
+                    "humanSaleLess" => $cart->human_sale_less,
                     "discount" => $cart->discount,
+                    "humanDiscount" => $cart->human_discount,
                 ];
             });
         }
         else {
             $data = [
                 "total" => 0,
+                "humanTotal" => 0,
                 "count" => 0,
                 "saleLess" => 0,
+                "humanSaleLess" => 0,
                 "discount" => 0,
+                "humanDiscount" => 0,
             ];
         }
         return (object) $data;
