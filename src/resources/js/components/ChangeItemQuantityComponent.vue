@@ -1,16 +1,31 @@
 <template>
     <form class="cart-item__form">
         <div class="cart-item__form-info">
-            <span class="cart-item__form-price">
-                {{ priceFormatted }} руб
-            </span>
-            <span class="cart-item__form-price cart-item__form-price_thin"
+            <div class="rub-format cart-item__form-price">
+                <span class="rub-format__value">
+                    {{ priceFormatted }}
+                </span>
+                <svg class="rub-format__ico cart-item__rub">
+                    <use xlink:href="#catalog-rub"></use>
+                </svg>
+            </div>
+            <div class="rub-format cart-item__form-price cart-item__form-price_thin cart-item__form-price_old"
                   v-if="variation.sale">
-                {{ saleFormatted }} руб
-            </span>
-            <span class="cart-item__form-price cart-item__form-price_discount"
+                <span class="rub-format__value">
+                    {{ saleFormatted }}
+                </span>
+                <svg class="rub-format__ico">
+                    <use xlink:href="#catalog-rub"></use>
+                </svg>
+            </div>
+            <span class="rub-format cart-item__form-price cart-item__form-price_discount"
                   v-if="variation.sale && showDiscount">
-                Скидка -{{ discountFormatted }} руб
+                <span class="rub-format__value">
+                    Скидка -{{ discountFormatted }}
+                </span>
+                <svg class="rub-format__ico">
+                    <use xlink:href="#catalog-rub"></use>
+                </svg>
             </span>
         </div>
 
@@ -36,7 +51,17 @@
                 </button>
             </div>
 
-            <div class="cart-item__form-price cart-item__form-price_thin">{{ variation.human_price }} Руб / шт</div>
+            <div class="rub-format cart-item__form-price cart-item__form-price_thin">
+                <span class="rub-format__value">
+                    {{ variation.human_price }}
+                </span>
+                <svg class="rub-format__ico">
+                    <use xlink:href="#catalog-rub"></use>
+                </svg>
+                <span class="rub-format__value">
+                    / шт
+                </span>
+            </div>
         </div>
     </form>
 </template>

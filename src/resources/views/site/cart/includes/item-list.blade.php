@@ -1,14 +1,16 @@
 @foreach ($cartItems as $item)
     @php($border = ! $loop->last)
     <div id="variation-{{ $item->variation->id }}" class="row cart-item{{ $border ? " border-bottom" : "" }}">
-        <div class="col-6 col-lg-2 cart-item__cover-image catalog-image">
+        <div class="col-6 col-sm-4 col-lg-2 cart-item__cover-image catalog-image order-1">
             @if ($item->cover)
                 @img([
                     "image" => $item->cover,
-                    "template" => "product-show-thumb",
+                    "template" => "small",
                     "lightbox" => "image-{$item->variation->id}",
                     "imgClass" => "img-fluid",
-                    "grid" => [],
+                    "grid" => [
+                        "product-show-thumb" => 992,
+                    ],
                 ])
             @else
                 <div class="catalog-image__empty cart-item__empty">
@@ -18,7 +20,18 @@
                 </div>
             @endif
         </div>
-        <div class="col-6 col-lg-5">
+
+        <div class="col-6 col-sm-12 col-lg-4 col-xl-5 order-2 order-sm-3">
+            <cart-change-quantity :init-quantity="{{ $item->quantity }}"
+                                  @if (config("variation-cart.showCartDiscount"))
+                                  :show-discount="true"
+                                  @endif
+                                  :init-variation="{{ json_encode($item->variationData) }}"
+                                  update-url="{{ route("catalog.cart.update", ["variation" => $item->variation]) }}">
+            </cart-change-quantity>
+        </div>
+
+        <div class="col-12 col-sm-8 col-lg-6 col-xl-5 order-3 order-sm-2">
             <a href="{{ route("catalog.products.show", ["product" => $item->product]) }}" class="cart-item__title">
                 {{ $item->product->title }}
             </a>
@@ -29,19 +42,13 @@
                     @csrf
                     @method("delete")
                     <button type="submit" class="btn btn-link cart-item__delete">
+                        <svg class="cart-item__ico">
+                            <use xlink:href="#cart-trash"></use>
+                        </svg>
                         Удалить
                     </button>
                 </form>
             </div>
-        </div>
-        <div class="col-12 col-lg-5">
-            <cart-change-quantity :init-quantity="{{ $item->quantity }}"
-                                  @if (config("variation-cart.showCartDiscount"))
-                                  :show-discount="true"
-                                  @endif
-                                  :init-variation="{{ json_encode($item->variationData) }}"
-                                  update-url="{{ route("catalog.cart.update", ["variation" => $item->variation]) }}">
-            </cart-change-quantity>
         </div>
     </div>
 @endforeach

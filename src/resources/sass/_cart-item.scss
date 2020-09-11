@@ -4,7 +4,13 @@
   &__cover-image {
     text-align: center;
     min-height: auto;
-    align-items: flex-start;
+    justify-content: flex-start;
+    @include media-breakpoint-up(sm) {
+      justify-content: center;
+    }
+    @include media-breakpoint-up(md) {
+      align-items: flex-start;
+    }
   }
 
   &__empty {
@@ -36,20 +42,73 @@
 
   &__delete {
     color: $danger;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    @include hover-focus() {
+      text-decoration: none;
+      box-shadow: none;
+      color: darken($danger, 15%);
+    }
+  }
+
+  &__ico {
+    fill: currentColor;
+    width: 24px;
+    height: 24px;
+    margin-right: .25rem;
+  }
+
+  &__rub {
+    font-size: 1rem;
   }
 
   &__form {
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
+    flex-direction: column-reverse;
+
+    @include media-breakpoint-between(sm, md) {
+      flex-direction: row-reverse;
+      align-items: flex-start;
+      justify-content: flex-end;
+      margin-top: $grid-gutter-width / 2;
+      margin-left: - $grid-gutter-width / 2;
+      margin-right: - $grid-gutter-width / 2;
+    }
+
+    @include media-breakpoint-up(xl) {
+      flex-direction: row;
+      align-items: flex-start;
+    }
     &-info {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: flex-end;
       justify-content: flex-start;
+      margin-bottom: 1rem;
+      @include media-breakpoint-between(sm, md) {
+        align-items: flex-start;
+        margin-top: .125rem;
+        padding-left: $grid-gutter-width / 2;
+      }
+      @include media-breakpoint-up(xl) {
+        margin-bottom: 0;
+        align-items: flex-start;
+      }
     }
     &-quantity {
       max-width: 100px;
+      text-align: right;
+      @include media-breakpoint-between(sm, md) {
+        flex: 0 0 33.3333333333%;
+        max-width: 33.3333333333%;
+        padding: 0 $grid-gutter-width / 2;
+      }
+      @include media-breakpoint-up(xl) {
+        text-align: left;
+      }
     }
     &-price {
       font-size: 1.125rem;
@@ -62,6 +121,19 @@
       }
       &_discount {
         color: lighten($danger, 20%);
+      }
+      &_old {
+        position: relative;
+        &:before {
+          content: '';
+          width: 100%;
+          height: 1px;
+          background-color: $gray-500;
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 55%;
+        }
       }
     }
   }
