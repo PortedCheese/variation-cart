@@ -7,7 +7,7 @@
                     "image" => $item->cover,
                     "template" => "small",
                     "lightbox" => "image-{$item->variation->id}",
-                    "imgClass" => "img-fluid",
+                    "imgClass" => "img-fluid rounded",
                     "grid" => [
                         "product-show-thumb" => 992,
                     ],

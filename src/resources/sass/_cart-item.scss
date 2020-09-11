@@ -5,11 +5,9 @@
     text-align: center;
     min-height: auto;
     justify-content: flex-start;
+    align-items: flex-start;
     @include media-breakpoint-up(sm) {
       justify-content: center;
-    }
-    @include media-breakpoint-up(md) {
-      align-items: flex-start;
     }
   }
 
