@@ -1,22 +1,49 @@
 <template>
-    <div class="card sticky-top" style="z-index: 900;">
-        <div class="card-header">
-            <h5 class="card-title">
-                <span>Ваша корзина</span>
-                <small>{{ cart.count }} {{ productsText }}</small>
+    <div class="card sticky-top cart-info" style="z-index: 900;">
+        <div class="card-header cart-info__header">
+            <h5 class="card-title cart-info__title-cover">
+                <span class="cart-info__title">Ваша корзина</span>
+                <span class="cart-info__title-count">{{ cart.count }} {{ productsText }}</span>
             </h5>
         </div>
-        <div class="card-body">
-            <div v-if="showDiscount">
-                Товары: {{ cart.humanSaleLess }}
-                <br>
-                Скидка: {{ cart.humanDiscount }}
+        <div class="card-body cart-info__body">
+            <div v-if="showDiscount" class="cart-info__discount">
+                <div class="cart-info__cost-item">
+                    <span class="cart-info__cost-title cart-info__cost-title_discount">Товары:</span>
+                    <span class="rub-format cart-info__cost-value cart-info__cost-value_products">
+                        <span class="rub-format__value">
+                            {{ cart.humanSaleLess }}
+                        </span>
+                        <svg class="rub-format__ico cart-info__discount-ico cart-info__discount-ico_big">
+                            <use xlink:href="#catalog-rub"></use>
+                        </svg>
+                    </span>
+                </div>
+                <div class="cart-info__cost-item">
+                    <span class="cart-info__cost-title cart-info__cost-title_discount">Скидка:</span>
+                    <span class="rub-format cart-info__cost-value cart-info__cost-value_danger">
+                        <span class="rub-format__value">
+                            - {{ cart.humanDiscount }}
+                        </span>
+                        <svg class="rub-format__ico cart-info__discount-ico">
+                            <use xlink:href="#catalog-rub"></use>
+                        </svg>
+                    </span>
+                </div>
             </div>
-            <div>
-                Общая стоимость {{ cart.humanTotal }}
+            <div class="cart-info__cost-item cart-info__cost-item_total">
+                <span class="cart-info__cost-title">Стоимость</span>
+                <span class="rub-format cart-info__cost-value">
+                    <span class="rub-format__value">
+                        {{ cart.humanTotal }}
+                    </span>
+                    <svg class="rub-format__ico cart-info__discount-ico cart-info__discount-ico_big">
+                        <use xlink:href="#catalog-rub"></use>
+                    </svg>
+                </span>
             </div>
         </div>
-        <div class="card-footer">
+        <div class="card-footer cart-info__footer">
             <a :href="checkoutUrl" class="btn btn-primary btn-block">
                 <span class="d-block d-md-none d-xl-block">Перейти к оформлению</span>
                 <span class="d-none d-md-block d-xl-none">Оформить</span>
