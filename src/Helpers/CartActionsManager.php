@@ -105,8 +105,10 @@ class CartActionsManager
         }
         $items = [];
         $collection = $cart->variations()
+            ->join("products", "product_variations.product_id", "products.id")
             ->with("product", "product.cover")
             ->orderBy("price")
+            ->orderBy("products.title")
             ->get();
         foreach ($collection as $variation) {
             $product = $variation->product;
