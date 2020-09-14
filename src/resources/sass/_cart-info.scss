@@ -1,5 +1,8 @@
 .cart-info {
   padding: $grid-gutter-width / 2 0;
+  z-index: 900;
+  position: sticky;
+  top: 0;
   &__header {
     border-bottom: none;
     background: none;
@@ -72,6 +75,26 @@
       &_big {
         font-size: 1rem;
       }
+    }
+  }
+
+  &__item {
+    margin-bottom: $grid-gutter-width / 2;
+    font-size: 1.125rem;
+    &-title {
+      font-size: 1rem;
+      color: $body-color;
+      @include hover() {
+        text-decoration: none;
+      }
+    }
+    &-description {
+      font-size: .875rem;
+      color: $gray-500;
+    }
+    &-quantity {
+      font-size: .75rem;
+      color: $gray-500;
     }
   }
 }

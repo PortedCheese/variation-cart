@@ -1,0 +1,25 @@
+.complete-page {
+  &__result {
+    margin-bottom: $grid-gutter-width / 2;
+    font-weight: $font-weight-bold;
+  }
+  &__text, &__ico {
+    display: inline;
+  }
+  &__total {
+    white-space: nowrap;
+  }
+  @include media-breakpoint-between(sm, md) {
+    &__quantity {
+        padding: 0;
+    }
+    &__info {
+      padding-left: 0;
+    }
+  }
+  @include media-breakpoint-up(xl) {
+    &__info {
+      align-items: flex-end;
+    }
+  }
+}

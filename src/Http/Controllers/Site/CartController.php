@@ -97,7 +97,15 @@ class CartController extends Controller
         if ($check != $order->uuid) {
             abort(404);
         }
-        return view("variation-cart::site.cart.complete", compact("order"));
+        $items = $order
+            ->items()
+            ->select("order_items.*")
+            ->join("products", "order_items.product_id", "products.id")
+            ->with("product", "product.cover")
+            ->orderBy("products.title")
+            ->get();
+        debugbar()->info($items);
+        return view("variation-cart::site.cart.complete", compact("order", "items"));
     }
 
     /**
