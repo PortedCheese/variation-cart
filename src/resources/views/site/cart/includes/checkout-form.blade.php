@@ -36,7 +36,7 @@
                 <input type="text"
                        id="phone"
                        name="phone"
-                       value="{{ old('phone') }}"
+                       value="{{ old('phone', $user ? $user->phone_number : "") }}"
                        class="form-control @error("phone") is-invalid @enderror">
                 <label for="phone">Номер телефона</label>
                 @error("phone")
