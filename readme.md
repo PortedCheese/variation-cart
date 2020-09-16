@@ -1,5 +1,7 @@
 # Variation Cart
 
+Добавление корзины товаров в каталог
+
 ## Install
     php artisan migrate
     
@@ -14,3 +16,17 @@
                                 {--only-default : Create default rules}
                                 {--scss : Export scss}
                                 {--vue : Export vue}
+                                
+## Config
+
+Выгрузить конфигурацию:
+
+    php artisan vendor:publish --provider="PortedCheese\VariationCart\ServiceProvider" --tag=config
+     
+Переменные конфигурации:
+
+    cartFacade - Класс фасада для корзины
+    cartSiteRoutes(true) - Использовать роуты для сайта из пакета
+    showCartIco(true) - Показать иконку корзины
+    showCartDiscount(true) - Показывать скидки в корзине
+    enableCart(true) - Включить корзину
