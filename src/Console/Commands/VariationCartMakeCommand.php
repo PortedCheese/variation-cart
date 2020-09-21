@@ -91,11 +91,11 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
      * @var array
      */
     protected $ruleRules = [
-        [
-            "title" => "Корзины",
-            "slug" => "variation-cart",
-            "policy" => "CartPolicy",
-        ]
+//        [
+//            "title" => "Корзины",
+//            "slug" => "variation-cart",
+//            "policy" => "CartPolicy",
+//        ]
     ];
 
     /**
