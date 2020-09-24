@@ -30,3 +30,10 @@
     showCartIco(true) - Показать иконку корзины
     showCartDiscount(true) - Показывать скидки в корзине
     enableCart(true) - Включить корзину
+    
+### Versions
+
+    v1.0.2:
+        - Добавлен наблюдатель для товара
+    Обновление:
+        - php artisan make:variation-cart --observers

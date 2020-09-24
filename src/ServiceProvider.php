@@ -5,9 +5,11 @@ namespace PortedCheese\VariationCart;
 use App\Cart;
 use App\Observers\Vendor\VariationCart\CartObserver;
 use App\Observers\Vendor\VariationCart\ProductVariationObserver;
+use App\Product;
 use App\ProductVariation;
 use Illuminate\View\View;
 use PortedCheese\VariationCart\Console\Commands\VariationCartMakeCommand;
+use PortedCheese\VariationCart\Observers\ProductObserver;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -121,6 +123,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 
         if (class_exists(ProductVariationObserver::class) && class_exists(ProductVariation::class)) {
             ProductVariation::observe(ProductVariationObserver::class);
+        }
+
+        if (class_exists(ProductObserver::class) && class_exists(Product::class)) {
+            Product::observe(ProductObserver::class);
         }
     }
 }

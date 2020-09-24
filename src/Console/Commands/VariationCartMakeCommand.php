@@ -60,7 +60,7 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
      *
      * @var array
      */
-    protected $observers = ["CartObserver", "ProductVariationObserver"];
+    protected $observers = ["CartObserver", "ProductVariationObserver", "ProductObserver"];
 
     /**
      * Папка для vue файлов.

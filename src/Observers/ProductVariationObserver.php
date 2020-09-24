@@ -16,13 +16,13 @@ class ProductVariationObserver
     public function updated(ProductVariation $variation)
     {
         $original = $variation->getOriginal();
-        $carts = $variation->carts;
         // Если выключили вариацию, убрать ее из всех корзин.
         if (empty($original["disabled_at"]) && ! empty($variation->disabled_at)) {
+            $carts = $variation->carts;
             $variation->carts()->sync([]);
-        }
-        foreach ($carts as $cart) {
-            $this->changeCart($cart);
+            foreach ($carts as $cart) {
+                $this->changeCart($cart);
+            }
         }
     }
 
