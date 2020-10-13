@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use PortedCheese\VariationCart\Facades\CartActions;
-use PortedCheese\ProductVariation\Http\Resources\ProductVariation as VariationResource;
 
 class CartController extends Controller
 {
@@ -173,13 +172,13 @@ class CartController extends Controller
             "success" => true,
             "message" => "Количество изменено"
         ]);
-
+        $class = config("product-variation.productVariationResource");
         return response()
             ->json([
                 "success" => $result["success"],
                 "message" => $result["message"],
                 "cart" => CartActions::getCartInfo($cart),
-                "variation" => new VariationResource($variation),
+                "variation" => new $class($variation),
             ]);
     }
 

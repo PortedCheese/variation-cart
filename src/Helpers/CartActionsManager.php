@@ -8,8 +8,6 @@ use App\ProductVariation;
 use Illuminate\Support\Facades\Cache;
 use PortedCheese\ProductVariation\Events\CreateNewOrder;
 use PortedCheese\ProductVariation\Facades\OrderActions;
-use PortedCheese\ProductVariation\Http\Resources\ProductVariation as VariationResource;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
@@ -110,6 +108,7 @@ class CartActionsManager
             ->orderBy("price")
             ->orderBy("products.title")
             ->get();
+        $class = config("product-variation.productVariationResource");
         foreach ($collection as $variation) {
             $product = $variation->product;
             $pivot = $variation->pivot;
@@ -118,7 +117,7 @@ class CartActionsManager
                 "product" => $product,
                 "title" => $product->title,
                 "variation" => $variation,
-                "variationData" => new VariationResource($variation),
+                "variationData" => new $class($variation),
                 "quantity" => $pivot->quantity,
             ];
         }
