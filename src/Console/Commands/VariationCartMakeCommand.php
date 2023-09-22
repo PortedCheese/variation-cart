@@ -33,6 +33,7 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
      *
      * @var string
      */
+    protected $vendorName = 'PortedCheese';
     protected $packageName = "VariationCart";
 
     /**

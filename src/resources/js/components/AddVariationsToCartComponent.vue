@@ -3,7 +3,7 @@
         <product-variations :variations="variations" v-model="chosenVariation" @change="resetData"></product-variations>
 
         <div class="product-add-to-cart">
-            <div class="choose-quantity product-add-to-cart__quantity">
+            <div class="choose-quantity product-add-to-cart__quantity"  v-if="variationData">
                 <button class="btn choose-quantity__decrease"
                         type="button"
                         :disabled="quantity <= 1"

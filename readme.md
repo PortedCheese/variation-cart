@@ -32,7 +32,13 @@
     enableCart(true) - Включить корзину
     
 ### Versions
-
+    v1.1.1: 
+        - иземенен вывод отключенных вариаций (без выбора количества), компонент AddVariationsToCart
+        - vendorName
+        Обновление:
+        - php artisan vendor:publish --provider="PortedCheese\VariationCart\ServiceProvider" --tag=public --force
+    v1.0.3:
+        - Добавлен класс в конфиг productVariationResource
     v1.0.2:
         - Добавлен наблюдатель для товара
     Обновление:
