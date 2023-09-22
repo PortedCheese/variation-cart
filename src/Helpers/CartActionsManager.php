@@ -242,7 +242,7 @@ class CartActionsManager
     public function recalculateTotal(Cart $cart)
     {
         $total = 0;
-        foreach ($cart->variations as $variation) {
+        foreach ($cart->variations()->get() as $variation) {
             $pivot = $variation->pivot;
             $total += $variation->price * $pivot->quantity;
         }
@@ -289,17 +289,32 @@ class CartActionsManager
         if (! $cookie) return false;
         $cart = $this->findCartByUuid($cookie);
         if (! $cart) return false;
-        $this->checkUserAuthCart($cart);
+        if ($this->checkUserAuthCart($cart) == -1) return false;
         return $cart;
+    }
+
+    /**
+     * @return void
+     */
+    public function forgetCookie()
+    {
+        $cookie = Cookie::forget("cartUuid");
+        Cookie::queue($cookie);
     }
 
     /**
      * Если пользователь авторизован.
      *
      * @param Cart $cart
+     * @return int|void
      */
     protected function checkUserAuthCart(Cart $cart)
     {
+        if (! Auth::check() && ! empty($cart->user_id)) {
+            $this->forgetCookie();
+            // не передавать корзину сразу после выхода пользователя
+            return -1;
+        }
         if (! Auth::check()) return;
         if (! empty($cart->user_id)) return;
         $userCart = $this->findCartByUserId(Auth::id());

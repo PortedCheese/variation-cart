@@ -32,6 +32,10 @@
     enableCart(true) - Включить корзину
     
 ### Versions
+    v1.1.2: 
+        - fix - работы с корзиной из-под одного аккаунта в нескольких браузерах (забывать куку и не передавать корзину при выходе)
+        Обновление:
+        - Проверить переопредление CartActionsManager методов: recalculateTotal(), findCartByCookie(), checkUserAuthCart()
     v1.1.1: 
         - иземенен вывод отключенных вариаций (без выбора количества), компонент AddVariationsToCart
         - vendorName
