@@ -59,7 +59,7 @@
                     <use xlink:href="#catalog-rub"></use>
                 </svg>
                 <span class="rub-format__value">
-                    / шт
+                     / {{ variation.short_measurement }}
                 </span>
             </div>
         </div>

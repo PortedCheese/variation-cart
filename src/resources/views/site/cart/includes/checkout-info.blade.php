@@ -15,7 +15,7 @@
                 </div>
                 <div class="cart-info__item-price rub-format">
                                 <span class="rub-format__value">
-                                    <span class="cart-info__item-quantity">{{ $item->quantity }} шт.x</span>
+                                    <span class="cart-info__item-quantity">{{ $item->quantity }} {{ $item->variation->short_measurement }} x</span>
                                     {{ $item->variation->price }}
                                 </span>
                     <svg class="rub-format__ico cart-info__discount-ico cart-info__discount-ico_big">
