@@ -36,6 +36,13 @@
                 {{ $item->product->title }}
             </a>
             <div class="cart-item__description">{{ $item->variation->description }}</div>
+            @isset ( $item->variation->specifications)
+                <div class="cart-item__description">
+                    @foreach($item->variation->specifications as $spec)
+                        <small class="mr-2">{{ $spec->value }}</small>
+                    @endforeach
+                </div>
+            @endisset
             <div class="cart-item__actions">
                 @include("category-product::site.products.includes.favorite", ["product" => $item->product])
                 <form action="{{ route("catalog.cart.delete", ["variation" => $item->variation]) }}" method="post">

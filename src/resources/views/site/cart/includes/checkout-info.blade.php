@@ -13,6 +13,14 @@
                 <div class="cart-info__item-description">
                     {{ $item->variation->description }}
                 </div>
+                @isset ($item->variation->specifications)
+                    <div class="cart-info__item-description">
+                        @foreach($item->variation->specifications as $spec)
+                            <small class="mr-2">{{ $spec->value }}</small>
+                        @endforeach
+                    </div>
+                @endisset
+
                 <div class="cart-info__item-price rub-format">
                                 <span class="rub-format__value">
                                     <span class="cart-info__item-quantity">{{ $item->quantity }} {{ $item->variation->short_measurement }} x</span>

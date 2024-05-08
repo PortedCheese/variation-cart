@@ -119,6 +119,7 @@ class CartActionsManager
                 "variation" => $variation,
                 "variationData" => new $class($variation),
                 "quantity" => $pivot->quantity,
+                "specifications" => $variation->specificationsArray
             ];
         }
         return $items;

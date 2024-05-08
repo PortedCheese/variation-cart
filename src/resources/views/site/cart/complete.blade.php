@@ -65,6 +65,13 @@
                                     {{ $item->product->title }}
                                 </a>
                                 <div class="cart-item__description">{{ $item->description }}</div>
+                                @isset($item->specifications)
+                                    <div class="cart-item__description">
+                                        @foreach($item->specificationsArray as $spec => $value)
+                                            <small class="mr-2">{{ $spec }}: {{ $value }}</small>
+                                        @endforeach
+                                    </div>
+                                @endisset
                                 <div class="cart-item__actions">
                                     @include("category-product::site.products.includes.favorite", ["product" => $item->product])
                                 </div>

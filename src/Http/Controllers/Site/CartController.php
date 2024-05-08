@@ -103,7 +103,6 @@ class CartController extends Controller
             ->with("product", "product.cover")
             ->orderBy("products.title")
             ->get();
-        debugbar()->info($items);
         return view("variation-cart::site.cart.complete", compact("order", "items"));
     }
 

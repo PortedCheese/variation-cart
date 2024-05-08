@@ -1,6 +1,8 @@
 <template>
     <form v-if="variations.length">
-        <product-variations :variations="variations" v-model="chosenVariation" @change="resetData"></product-variations>
+        <product-variations :specifications="specifications" :variations="variations"
+                            v-model="chosenVariation" @change="resetData">
+        </product-variations>
 
         <div class="product-add-to-cart">
             <div class="choose-quantity product-add-to-cart__quantity"  v-if="variationData">
@@ -69,6 +71,10 @@
             cartUrl: {
                 type: String,
                 required: true
+            },
+            specifications:{
+                type: Object,
+                required: false
             }
         },
 

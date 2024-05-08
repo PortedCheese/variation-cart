@@ -32,13 +32,22 @@
     enableCart(true) - Включить корзину
     
 ### Versions
+    v1.3: variation specifications (product-variation ^1.3)
+        - php artisan vendor:publish --provider="PortedCheese\VariationCart\ServiceProvider" --tag=public --force
+        - npm run
+        - php artisan cache:clear
+        - php artisan queue:restart
+        Проверить переопределение:
+        - Helpers: CartActionManager > specifications
+        - components: AddVariationsToCartComponent > specifications
+        - blades: site.variations.show, site.cart.complete, site.cart.includes.checkout-info, site.cart.includes.item-list
     v1.2: measurement (product-variation ^1.2)
         Обновление:
         - php artisan vendor:publish --provider="PortedCheese\VariationCart\ServiceProvider" --tag=public --force
 
         Проверить переопределение:
-        - composenents: ChangeItemQuantity
-        - blades: site.cart.complete, site.includes.checkout-info
+        - components: ChangeItemQuantity
+        - blades: site.cart.complete, site.cart.includes.checkout-info
         
     v1.1.2: 
         - fix - работы с корзиной из-под одного аккаунта в нескольких браузерах (забывать куку и не передавать корзину при выходе)
