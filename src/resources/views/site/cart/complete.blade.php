@@ -55,7 +55,7 @@
                                         </svg>
                                     </div>
                                     <div class="cart-item__form-quantity complete-page__quantity">
-                                        {{ $item->quantity }} {{ $item->measurement }}
+                                        {{ $item->quantity }} {{ $item->short_measurement }}
                                     </div>
                                 </div>
                             </div>
