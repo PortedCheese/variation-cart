@@ -16,8 +16,8 @@
                 v-if="! success">
             Купить
         </button>
-        <a :href="cartUrl" class="btn btn-primary btn-block variation-price__btn" v-else>
-            В корзину
+        <a :href="cartUrl" class="btn btn-outline-primary btn-block variation-price__btn" v-else>
+            К корзине
         </a>
     </div>
 </template>
