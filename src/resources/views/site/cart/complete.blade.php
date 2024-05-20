@@ -26,7 +26,16 @@
                         @php($border = ! $loop->last)
                         <div class="row cart-item{{ $border ? " border-bottom" : "" }}">
                             <div class="col-6 col-sm-4 col-lg-2 cart-item__cover-image catalog-image order-1">
-                                @if ($item->product->cover)
+                                @if ($item->variation && $item->variation->image)
+                                    @pic([
+                                    "image" => $item->variation->image,
+                                    "template" => "small",
+                                    "imgClass" => "img-fluid rounded",
+                                    "grid" => [
+                                    "product-show-thumb" => 992,
+                                    ],
+                                    ])
+                                @elseif ($item->product->cover)
                                     @pic([
                                         "image" => $item->product->cover,
                                         "template" => "small",
@@ -65,7 +74,7 @@
                                     {{ $item->product->title }}
                                 </a>
                                 <div class="cart-item__description">{{ $item->description }}</div>
-                                @isset($item->specifications)
+                                @isset($item->specificationsArray)
                                     <div class="cart-item__description">
                                         @foreach($item->specificationsArray as $spec => $value)
                                             <small class="mr-2">{{ $spec }}: {{ $value }}</small>

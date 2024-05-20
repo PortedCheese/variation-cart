@@ -2,7 +2,17 @@
     @php($border = ! $loop->last)
     <div id="variation-{{ $item->variation->id }}" class="row cart-item{{ $border ? " border-bottom" : "" }}">
         <div class="col-6 col-sm-4 col-lg-2 cart-item__cover-image catalog-image order-1">
-            @if ($item->cover)
+            @if ($item->variation->image)
+                @img([
+                "image" => $item->variation->image,
+                "template" => "small",
+                "lightbox" => "image-{$item->variation->id}",
+                "imgClass" => "img-fluid rounded",
+                "grid" => [
+                "product-show-thumb" => 992,
+                ],
+                ])
+            @elseif ($item->cover)
                 @img([
                     "image" => $item->cover,
                     "template" => "small",
