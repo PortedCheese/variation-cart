@@ -11,7 +11,7 @@
     ],
     "minimum-stability": "dev",
     "require": {
-      "portedcheese/product-variation": "@dev"
+      "portedcheese/product-variation": "^2.0"
     },
     "autoload": {
         "psr-4": {
