@@ -3,6 +3,7 @@
 namespace PortedCheese\VariationCart\Models;
 
 use App\ProductVariation;
+use App\CartProductVariationSet;
 use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
@@ -19,6 +20,41 @@ class Cart extends Model
         return $this->belongsToMany(ProductVariation::class)
             ->withPivot("quantity")
             ->withTimestamps();
+    }
+
+    /**
+     * Сеты дополнений
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sets(){
+        return $this->hasMany(CartProductVariationSet::class);
+    }
+
+    /**
+     * Количество комплектов вариации в корзине
+     *
+     * @param ProductVariation $variation
+     * @return int
+     */
+    public function reserveCount(ProductVariation $variation){
+        return $this->sets()->where('product_variation_id','=',$variation->id)->count();
+    }
+
+    /**
+     * Количество одиночных варриаций в корзине
+     *
+     * @param ProductVariation $variation
+     * @return int
+     */
+    public function aloneCount(ProductVariation $variation){
+        $count = 0;
+        $variations = $this->variations()->where('product_variation_id','=',$variation->id)->get();
+        foreach ($variations as $item) {
+            $pivot = $item->pivot;
+            $count += $pivot->quantity;
+        }
+        return $count;
     }
 
     /**
@@ -69,6 +105,17 @@ class Cart extends Model
                 $price += $variation->price * $quantity;
             }
         }
+        foreach ($this->sets as $set){
+            foreach ($set->addons as $addon){
+                $quantity = $addon->quantity;
+                if ($addon->variation->sale) {
+                    $price += $addon->variation->sale_price * $quantity;
+                }
+                else {
+                    $price += $addon->variation->price * $quantity;
+                }
+            }
+        }
         return $price;
     }
 
@@ -101,6 +148,15 @@ class Cart extends Model
             $quantity = $pivot->quantity;
             $price += $variation->discount * $quantity;
         }
+
+        foreach ($this->sets as $set){
+            foreach ($set->addons as $addon){
+                $quantity = $addon->quantity;
+                $price += $addon->variation->discount * $quantity;
+            }
+        }
+
+
         return $price;
     }
 

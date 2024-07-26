@@ -31,6 +31,32 @@
                     </svg>
                 </div>
             </div>
+            @if(isset($item->addons) && count($item->addons))
+                @foreach ($item->addons as $addon)
+                    <div class="cart-info__item cart-info__item-addon{{ ! $loop->last ? ' mb-0':'' }}">
+                        <div class="cart-info__item-title">
+                            {{ $addon->product->title }}
+                        </div>
+                        <div class="cart-info__item-description">{{ $addon->variation->description }}</div>
+                        @isset ( $addon->variation->specifications)
+                            <div class="cart-info__item-description">
+                                @foreach($addon->variation->specifications as $spec)
+                                    <small class="mr-2">{{ $spec->value }}</small>
+                                @endforeach
+                            </div>
+                        @endisset
+                        <div class="cart-info__item-price rub-format">
+                                <span class="rub-format__value">
+                                    <span class="cart-info__item-quantity">{{ $addon->quantity }} {{ $addon->variation->short_measurement }} x</span>
+                                    {{ $addon->variation->price }}
+                                </span>
+                            <svg class="rub-format__ico cart-info__discount-ico cart-info__discount-ico_big">
+                                <use xlink:href="#catalog-rub"></use>
+                            </svg>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         @endforeach
 
         <hr>

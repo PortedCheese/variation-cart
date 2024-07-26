@@ -1,5 +1,5 @@
 @foreach ($cartItems as $item)
-    @php($border = ! $loop->last)
+    @php($border = ! $loop->last && ! count($item->addons))
     <div id="variation-{{ $item->variation->id }}" class="row cart-item{{ $border ? " border-bottom" : "" }}">
         <div class="col-6 col-sm-4 col-lg-2 cart-item__cover-image catalog-image order-1">
             @if ($item->variation->image)
@@ -35,9 +35,10 @@
             <cart-change-quantity :init-quantity="{{ $item->quantity }}"
                                   @if (config("variation-cart.showCartDiscount"))
                                   :show-discount="true"
+                                  :show-quantity="{{ ! count($item->addons) ? 'true' : 'false' }}"
                                   @endif
                                   :init-variation="{{ json_encode($item->variationData) }}"
-                                  update-url="{{ route("catalog.cart.update", ["variation" => $item->variation]) }}">
+                                  update-url="{{ !count($item->addons) ? route("catalog.cart.update", ["variation" => $item->variation]):"" }}">
             </cart-change-quantity>
         </div>
 
@@ -54,18 +55,12 @@
                 </div>
             @endisset
             <div class="cart-item__actions">
-                @include("category-product::site.products.includes.favorite", ["product" => $item->product])
-                <form action="{{ route("catalog.cart.delete", ["variation" => $item->variation]) }}" method="post">
-                    @csrf
-                    @method("delete")
-                    <button type="submit" class="btn btn-link cart-item__delete">
-                        <svg class="cart-item__ico">
-                            <use xlink:href="#cart-trash"></use>
-                        </svg>
-                        Удалить
-                    </button>
-                </form>
+                @if (! count($item->addons))
+                    @include("category-product::site.products.includes.favorite", ["product" => $item->product])
+                    @includeIf("variation-cart::site.cart.includes.item-remove", ["item" => $item])
+                @endif
             </div>
         </div>
     </div>
+    @include("variation-cart::site.cart.includes.addons-list",["last" => $loop->last ])
 @endforeach

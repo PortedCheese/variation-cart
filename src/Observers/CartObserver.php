@@ -3,7 +3,9 @@
 namespace PortedCheese\VariationCart\Observers;
 
 use App\Cart;
+use App\ProductVariation;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use PortedCheese\VariationCart\Facades\CartActions;
 
@@ -51,6 +53,16 @@ class CartObserver
     public function deleting(Cart $cart)
     {
         $cart->variations()->sync([]);
+        $sets = $cart->sets()->get();
+        if (isset($sets)){
+            foreach ($sets as $set){
+                $addons = $set->addons()->get();
+                foreach ($addons as $addon) {
+                    $addon->delete();
+                }
+                $set->delete();
+            }
+        }
         CartActions::clearCartCache($cart);
     }
 }

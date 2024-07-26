@@ -42,6 +42,8 @@ class VariationCartMakeCommand extends BaseConfigModelCommand
      */
     protected $models = [
         "Cart",
+        "CartProductVariationSet",
+        "CartProductVariationSetAddon"
     ];
 
     /**

@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import productVariationEventBus from '../category-product/categoryProductEventBus';
+
     export default {
         name: "CartStateComponent",
 
@@ -47,7 +49,7 @@
         },
 
         mounted() {
-            this.$root.$on("change-cart", this.changeCartData);
+            productVariationEventBus.$on("change-cart", this.changeCartData);
         },
 
         methods: {

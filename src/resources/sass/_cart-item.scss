@@ -1,6 +1,9 @@
 .cart-item {
   padding: $grid-gutter-width / 2 0;
 
+  &__addon{
+    background-color: rgba($secondary, .05);
+  }
   &__cover-image {
     text-align: center;
     min-height: auto;

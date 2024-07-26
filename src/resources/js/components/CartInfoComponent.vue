@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import productVariationEventBus from '../category-product/categoryProductEventBus';
     export default {
         name: "CartInfoComponent",
 
@@ -80,7 +81,7 @@
         },
 
         mounted() {
-            this.$root.$on("change-cart", this.changeCartData);
+            productVariationEventBus.$on("change-cart", this.changeCartData);
         },
 
         computed: {

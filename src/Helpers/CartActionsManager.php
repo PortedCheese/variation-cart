@@ -3,6 +3,8 @@
 namespace PortedCheese\VariationCart\Helpers;
 
 use App\Cart;
+use App\CartProductVariationSet;
+use App\CartProductVariationSetAddon;
 use App\Order;
 use App\ProductVariation;
 use Illuminate\Support\Facades\Cache;
@@ -109,19 +111,66 @@ class CartActionsManager
             ->orderBy("products.title")
             ->get();
         $class = config("product-variation.productVariationResource");
+        // addons
+        $sets = $cart->sets()->get();
+        $addons = [];
+        $count = [];
+        foreach ($sets as $set) {
+            $setItems = $set->addons()->get();
+            $setItemsArray = [];
+            foreach ($setItems as $setItem) {
+                $setItemsArray []= (object) [
+                    "cover" => $setItem->variation->product->cover,
+                    "product" => $setItem->variation->product,
+                    "title" => $setItem->variation->product->title,
+                    "variation" => $setItem->variation,
+                    "variationData" => new $class($setItem->variation),
+                    "quantity" => $setItem->quantity,
+                    "specifications" => $setItem->variation->specificationsArray,
+                    "addons" => null,
+                    "set" => $set->id,
+                    "addonId" => $setItem->id,
+                ];
+            }
+            $addons[$set->product_variation_id][] = $setItemsArray;
+        }
+        // variations with addons
         foreach ($collection as $variation) {
+            $count[$variation->id] = isset($addons[$variation->id])? count($addons[$variation->id]) : 0;
             $product = $variation->product;
             $pivot = $variation->pivot;
-            $items[] = (object) [
-                "cover" => $product->cover,
-                "product" => $product,
-                "title" => $product->title,
-                "variation" => $variation,
-                "variationData" => new $class($variation),
-                "quantity" => $pivot->quantity,
-                "specifications" => $variation->specificationsArray
-            ];
+            if ($count[$variation->id] <= $pivot->quantity){
+                if (isset($addons[$variation->id])){
+                    foreach ($addons[$variation->id] as $addonItems){
+                        $items[] = (object) [
+                            "cover" => $product->cover,
+                            "product" => $product,
+                            "title" => $product->title,
+                            "variation" => $variation,
+                            "variationData" => new $class($variation),
+                            "quantity" => 1,
+                            "specifications" => $variation->specificationsArray,
+                            "addons" => $addonItems
+                        ];
+                    }
+                }
+            }
+            // variations
+            $q = $pivot->quantity - $count[$variation->id];
+            if ($q > 0){
+                $items[] = (object) [
+                    "cover" => $product->cover,
+                    "product" => $product,
+                    "title" => $product->title,
+                    "variation" => $variation,
+                    "variationData" => new $class($variation),
+                    "quantity" => $q,
+                    "specifications" => $variation->specificationsArray,
+                    "addons" => []
+                ];
+            }
         }
+
         return $items;
     }
 
@@ -130,10 +179,11 @@ class CartActionsManager
      *
      * @param ProductVariation $variation
      * @param int $quantity
+     * @param array|null $addons
      * @param Cart|null $customCart
      * @return Cart
      */
-    public function addToCart(ProductVariation $variation, $quantity = 1, Cart $customCart = null)
+    public function addToCart(ProductVariation $variation, $quantity = 1, Array $addons = null, Cart $customCart = null)
     {
         $cart = $customCart ?? $this->initCart();
         // Если вариация выключена, вернуть корзину без изменения.
@@ -144,6 +194,20 @@ class CartActionsManager
             ]);
             return $cart;
         }
+        // если дополнения выключены - вернуть корзину без изменения.
+        if (isset($addons)){
+            foreach ($addons as $addon){
+                $addonVariation = ProductVariation::query()->find($addon["id"]);
+                if (! isset($addonVariation) ||  $addonVariation->disabled_at){
+                    session()->flash("addToCartResult", [
+                        "success" => false,
+                        "message" => "Дополнение закончилось",
+                    ]);
+                    return $cart;
+                }
+            }
+        }
+
         $oldQuantity = DB::table("cart_product_variation")
             ->select("quantity")
             ->where("cart_id", $cart->id)
@@ -152,11 +216,39 @@ class CartActionsManager
         if ($oldQuantity) {
             $quantity += $oldQuantity->quantity;
         }
+        if (isset($addons))
+        {
+            $this->addonsToCart($cart, $variation, $addons );
+        }
         $cart->variations()->syncWithoutDetaching([
             $variation->id => ["quantity" => $quantity]
         ]);
         $this->recalculateTotal($cart);
         return $cart;
+    }
+
+    /**
+     * Допы к товару
+     *
+     * @param Cart $cart
+     * @param ProductVariation $variation
+     * @param array $addons
+     * @return void
+     */
+    protected function addonsToCart(Cart $cart, ProductVariation $variation, Array $addons){
+        if (! count($addons)) return;
+
+        $addonSet = CartProductVariationSet::create([
+            'product_variation_id' => $variation->id,
+            'cart_id' => $cart->id,
+        ]);
+        foreach ($addons as $addon){
+            $addonSet->addons()->create([
+                "product_variation_id" => $addon["id"],
+                "cart_id" => $cart->id,
+                "quantity" => $addon["quantity"]
+            ]);
+        }
     }
 
     /**
@@ -177,15 +269,44 @@ class CartActionsManager
             ]);
             return $cart;
         }
+        $reserveCount = $cart->reserveCount($variation);
         $cart->variations()->syncWithoutDetaching([
-            $variation->id => ["quantity" => $quantity]
+            $variation->id => ["quantity" => $reserveCount+$quantity]
         ]);
         $this->recalculateTotal($cart);
         return $cart;
     }
 
     /**
-     * Удалить из корзины.
+     * Изменить количество дополнения
+     *
+     * @param $quantity
+     * @param $setId
+     * @param $addonId
+     * @param Cart|null $customCart
+     * @return Cart|bool|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model
+     */
+    public function changeAddonQuantity($quantity = 1, $setId = 0, $addonId = 0, Cart $customCart = null)
+    {
+        $cart = $customCart ?? $this->initCart();
+        $set = CartProductVariationSet::query()->find($setId);
+        $addon = CartProductVariationSetAddon::query()->find($addonId);
+        if (! $cart || ! $set || ! $addon) {
+            session()->flash("changeQuantityResult", [
+                "success" => false,
+                "message" => "Что-то пошло не так",
+            ]);
+            return $cart;
+        }
+        $addon->quantity = $quantity;
+        $addon->save();
+        $this->recalculateTotal($cart);
+        $this->clearCartCache($cart);
+        return $cart;
+    }
+
+    /**
+     * Удалить товар из корзины.
      *
      * @param ProductVariation $variation
      */
@@ -195,7 +316,80 @@ class CartActionsManager
         if (! $cart) {
             return;
         }
-        $cart->variations()->detach($variation);
+
+        $reserveCount = $cart->reserveCount($variation);
+        if ($reserveCount === 0)
+            $cart->variations()->detach($variation);
+        else{
+            $cart->variations()->syncWithoutDetaching([
+                $variation->id => ["quantity" => $reserveCount]
+            ]);
+        }
+
+        $this->recalculateTotal($cart);
+    }
+
+    /**
+     * Удалить дополнение из корзины.
+     *
+     * @param CartProductVariationSetAddon $addon
+     * @return void
+     *
+     */
+    public function deleteAddonItem(CartProductVariationSetAddon $addon)
+    {
+        $cart = $this->getCart();
+        if (! $cart) {
+            return;
+        }
+        $set = $addon->set;
+        $set->addons()->delete($addon);
+        if (! $set->addons()->count())
+            $set->delete();
+
+        $this->recalculateTotal($cart);
+        $this->clearCartCache($cart);
+    }
+
+    /**
+     * Удалить комплект из корзины.
+     *
+     * @param CartProductVariationSet $set
+     * @return void
+     *
+     */
+    public function deleteSet(CartProductVariationSet $set)
+    {
+        $cart = $this->getCart();
+        if (! $cart) {
+            return;
+        }
+
+        $variation = $set->variation;
+        if (! $variation) return;
+
+        $reserveCount = $cart->reserveCount($variation);
+        if (! $reserveCount) return;
+
+        $count = $cart->aloneCount($variation);
+
+        // удалить допы
+        foreach ($set->addons()->get() as $item) {
+            $set->addons()->delete($item);
+        }
+        // отвязать вариацию
+        switch ($count) {
+            case 0 :
+                break;
+            case 1 :
+                $cart->variations()->detach($variation);
+                break;
+            default:
+                $cart->variations()->syncWithoutDetaching([$variation->id => ["quantity" => $count-1]]);
+        }
+        // удалить комплект
+        $set->delete();
+
         $this->recalculateTotal($cart);
     }
 
@@ -206,6 +400,16 @@ class CartActionsManager
      */
     public function clearCart(Cart $cart)
     {
+        $sets = $cart->sets;
+        if (isset($sets)){
+            foreach ($sets as $set){
+                $addons = $set->addons;
+                foreach ($addons as $addon) {
+                    $addon->delete();
+                }
+                $set->delete();
+            }
+        }
         foreach ($cart->variations as $variation) {
             $cart->variations()->detach($variation);
         }
@@ -225,11 +429,32 @@ class CartActionsManager
             "user_data" => $userData,
         ]);
         $items = $this->getCartItems($cart);
-        $variations = [];
-        foreach ($items as $item) {
-            $variations[$item->variation->id] = $item->variation->pivot->quantity;
-        }
-        OrderActions::addVariationsToOrder($order, $variations);
+        OrderActions::makeOrderFromCart($order, $items);
+        //Log::info(json_encode($items ));
+
+//        foreach ($items as $item) {
+//            $variations = [];
+//            $addonsSets = [];
+//            $variations[$item->variation->id] = $item->quantity;
+//            OrderActions::addVariationsToOrder($order, $variations);
+//            if ($addons = $item->addons){
+//                foreach ($addons as $addon){
+//                    $set = $addon->set;
+//                    $addonsSets[$item->variation->id][$set][$addon->variation->id] = $addon->quantity;
+//                }
+//            }
+//            OrderActions::addAddonVariationSetsToOrder($order,$addonsSets);
+//        }
+//        Log::info(json_encode($variations ));
+//        Log::info(json_encode($addonsSets ));
+//        foreach ($variations as $variationId => $variationGroup){
+//            foreach ($variationGroup as $variationQuantity) {
+//                OrderActions::addVariationsToOrder($order, $variations);
+//            }
+//        }
+
+
+//
         $this->clearCart($cart);
         event(new CreateNewOrder($order));
         return $order;
@@ -246,6 +471,14 @@ class CartActionsManager
         foreach ($cart->variations()->get() as $variation) {
             $pivot = $variation->pivot;
             $total += $variation->price * $pivot->quantity;
+        }
+        // дополнения
+        foreach ($cart->sets()->get() as $set){
+            $addonVariations = $set->addons()->get();
+            foreach ($addonVariations as $addon){
+                $quantity = $addon->quantity;
+                $total += $addon->variation->price * $quantity;
+            }
         }
         $cart->total = $total;
         $cart->save();

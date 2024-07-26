@@ -9,4 +9,16 @@
     margin-right: $grid-gutter-width;
     max-width: 100px;
   }
+
+  &__addons{
+    &-title{
+      display: block;
+      color: $primary;
+      &:hover{
+        cursor: pointer;
+        color: rgba($primary, .8);
+        transition: $btn-transition;
+      }
+    }
+  }
 }

@@ -79,8 +79,12 @@
   }
 
   &__item {
-    margin-bottom: $grid-gutter-width / 2;
+    margin-bottom: $grid-gutter-width * .5;
     font-size: 1.125rem;
+    &-addon{
+      background-color: rgba($secondary, .05);
+      padding: .5rem;
+    }
     &-title {
       font-size: 1rem;
       color: $body-color;

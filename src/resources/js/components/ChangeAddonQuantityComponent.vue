@@ -31,19 +31,19 @@
 
         <div class="cart-item__form-quantity">
             <div class="choose-quantity">
-                <button v-if="showQuantity" class="btn choose-quantity__decrease"
+                <button class="btn choose-quantity__decrease"
                         type="button"
                         :disabled="quantity <= 1 || loading"
                         @click="decreaseQuantity">
                     <i class="fas fa-minus"></i>
                 </button>
-                <input v-if="showQuantity" type="number"
+                <input type="number"
                        aria-label="Количество"
                        class="form-control choose-quantity__input"
                        min="1"
                        @change.self="sendQuantity"
                        v-model.lazy="quantity">
-                <button v-if="showQuantity" class="btn choose-quantity__increase"
+                <button class="btn choose-quantity__increase"
                         type="button"
                         :disabled="loading"
                         @click="increaseQuantity">
@@ -68,9 +68,8 @@
 
 <script>
 import productVariationEventBus from '../category-product/categoryProductEventBus';
-
-    export default {
-        name: "ChangeItemQuantityComponent",
+export default {
+        name: "ChangeAddonQuantityComponent",
 
         props: {
             initQuantity: {
@@ -88,27 +87,9 @@ import productVariationEventBus from '../category-product/categoryProductEventBu
                 required: true
             },
 
-            initSet: {
-                type: Number,
-                required: false,
-                default: null
-            },
-
-            initAddon: {
-                type: Number,
-                required: false,
-                default: null
-            },
-
             showDiscount: {
                 type: Boolean,
                 default: false
-            },
-
-            showQuantity: {
-                type: Boolean,
-                required: false,
-                default: true
             }
         },
 
@@ -165,9 +146,7 @@ import productVariationEventBus from '../category-product/categoryProductEventBu
                 this.messages = [];
                 axios
                     .put(this.updateUrl, {
-                        quantity: this.quantity,
-                        set: this.initSet ? this.initSet : null,
-                        addon: this.initAddon ? this.initAddon : null,
+                        quantity: this.quantity
                     })
                     .then(response => {
                         let result = response.data;

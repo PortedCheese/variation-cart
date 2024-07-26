@@ -2,6 +2,8 @@
 
 namespace PortedCheese\VariationCart\Http\Controllers\Site;
 
+use App\CartProductVariationSet;
+use App\CartProductVariationSetAddon;
 use App\Http\Controllers\Controller;
 use App\Order;
 use App\ProductVariation;
@@ -98,12 +100,21 @@ class CartController extends Controller
         }
         $items = $order
             ->items()
+            ->whereNull("order_item_set_id")
             ->select("order_items.*")
             ->join("products", "order_items.product_id", "products.id")
             ->with("product", "product.cover")
             ->orderBy("products.title")
             ->get();
-        return view("variation-cart::site.cart.complete", compact("order", "items"));
+        $addons = [];
+        foreach ($items as $item){
+            if ($sets = $item->orderItemSets){
+                foreach ($sets as $set){
+                    $addons[$item->id][] = $set->addons;
+                }
+            }
+        }
+        return view("variation-cart::site.cart.complete", compact("order", "items", "addons"));
     }
 
     /**
@@ -121,6 +132,34 @@ class CartController extends Controller
     }
 
     /**
+     * Удалить дополнение из комплекта корзины.
+     *
+     * @param CartProductVariationSetAddon $addon
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteAddonItem(CartProductVariationSetAddon $addon)
+    {
+        CartActions::deleteAddonItem($addon);
+        return redirect()
+            ->back()
+            ->with("success", "Дополнение удалено из корзины");
+    }
+
+    /**
+     * Удалить дополнение из комплекта корзины.
+     *
+     * @param CartProductVariationSet $set
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteSet(CartProductVariationSet $set)
+    {
+        CartActions::deleteSet($set);
+        return redirect()
+            ->back()
+            ->with("success", "Комплект удален из корзины");
+    }
+
+    /**
      * Добавление вариации в корзину.
      *
      * @param Request $request
@@ -130,10 +169,11 @@ class CartController extends Controller
     public function addToCart(Request $request, ProductVariation $variation)
     {
         $this->addToCartValidator($request->all());
-        $cart = CartActions::addToCart($variation, $request->get("quantity"));
+        $addons = $request->get("addons")? $request->get("addons"):[];
+        $cart = CartActions::addToCart($variation, $request->get("quantity"), $addons);
         $result = session()->pull("addToCartResult", [
             "success" => true,
-            "message" => "Товар добавлен в корзину"
+            "message" => ! count($addons) ? "Товар добавлен в корзину": "Товар и дополнения добавлены в корзину"
         ]);
         return response()
             ->json([
@@ -150,8 +190,16 @@ class CartController extends Controller
     {
         Validator::make($data, [
             "quantity" => ["required", "numeric", "min:1"],
+            "addons" => ["array"],
+            "addons." => ["object"],
+            "addons.id" => ["numeric", "min:1"],
+            "addons.quantity" => ["numeric", "min:1"],
         ], [], [
-            "quantity" => "Количество",
+            "quantity" => "Количество товара",
+            "addons" => "Дополнения",
+            "addons." => "Дополнение",
+            "addons.id" => "Дополнение",
+            "addons.quantity" => "Количество дополнения",
         ])->validate();
     }
 
@@ -182,14 +230,46 @@ class CartController extends Controller
     }
 
     /**
+     * Изменить количество.
+     *
+     * @param Request $request
+     * @param ProductVariation $variation
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeAddonQuantity(Request $request, ProductVariation $variation)
+    {
+        $this->changeQuantityValidator($request->all());
+        $quantity = $request->get("quantity");
+        $setId = $request->get("set");
+        $addonId = $request->get("addon");
+        $cart = CartActions::changeAddonQuantity($quantity, $setId, $addonId);
+        $result = session()->pull("addToCartResult", [
+            "success" => true,
+            "message" => "Количество изменено"
+        ]);
+        $class = config("product-variation.productVariationResource");
+        return response()
+            ->json([
+                "success" => $result["success"],
+                "message" => $result["message"],
+                "cart" => CartActions::getCartInfo($cart),
+                "variation" => new $class($variation),
+            ]);
+    }
+
+    /**
      * @param $data
      */
     protected function changeQuantityValidator($data)
     {
         Validator::make($data, [
             "quantity" => ["required", "numeric", "min:1"],
+            "set" => ["nullable", "numeric", "min:1"],
+            "addon" => ["nullable","numeric", "min:1"],
         ], [], [
             "quantity" => "Количество",
+            "set" => "Комплект",
+            "addon" => "Дополенние",
         ])->validate();
     }
 }

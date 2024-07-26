@@ -16,6 +16,12 @@ Route::group([
         ->name("delete");
     Route::put("/{variation}", "CartController@changeQuantity")
         ->name("update");
+    Route::put("/addon/{variation}", "CartController@changeAddonQuantity")
+        ->name("update-addon");
+    Route::delete("/addon/{addon}", "CartController@deleteAddonItem")
+        ->name("delete-addon");
+    Route::delete("/set/{set}", "CartController@deleteSet")
+        ->name("delete-set");
     Route::get("/checkout", "CartController@checkout")
         ->name("checkout");
     Route::post("/checkout", "CartController@submit")
