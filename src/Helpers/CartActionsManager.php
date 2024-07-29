@@ -343,8 +343,11 @@ class CartActionsManager
             return;
         }
         $set = $addon->set;
-        $set->addons()->delete($addon);
-        if (! $set->addons()->count())
+        if (! $set) {
+            return;
+        }
+        $addon->delete();
+        if (count($set->addons) < 1)
             $set->delete();
 
         $this->recalculateTotal($cart);
