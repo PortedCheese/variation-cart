@@ -31,7 +31,7 @@
 
         <div class="cart-item__form-quantity">
             <div class="choose-quantity">
-                <button v-if="showQuantity" class="btn choose-quantity__decrease"
+                <button v-if="showQuantity" class="choose-quantity__decrease"
                         type="button"
                         :disabled="quantity <= 1 || loading"
                         @click="decreaseQuantity">
@@ -43,7 +43,7 @@
                        min="1"
                        @change.self="sendQuantity"
                        v-model.lazy="quantity">
-                <button v-if="showQuantity" class="btn choose-quantity__increase"
+                <button v-if="showQuantity" class="choose-quantity__increase"
                         type="button"
                         :disabled="loading"
                         @click="increaseQuantity">

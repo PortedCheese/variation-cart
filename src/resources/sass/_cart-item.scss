@@ -1,5 +1,5 @@
 .cart-item {
-  padding: $grid-gutter-width / 2 0;
+  padding: $grid-gutter-width * .5 0;
 
   &__addon{
     background-color: rgba($secondary, .05);
@@ -25,7 +25,8 @@
   &__title {
     color: $body-color;
     font-size: .875rem;
-    @include hover() {
+    text-decoration: none;
+    &:hover{
       text-decoration: none;
     }
   }
@@ -46,7 +47,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    @include hover-focus() {
+    &:hover,&:focus {
       text-decoration: none;
       box-shadow: none;
       color: darken($danger, 15%);
@@ -74,9 +75,9 @@
       flex-direction: row-reverse;
       align-items: flex-start;
       justify-content: flex-end;
-      margin-top: $grid-gutter-width / 2;
-      margin-left: - $grid-gutter-width / 2;
-      margin-right: - $grid-gutter-width / 2;
+      margin-top: $grid-gutter-width * .5;
+      margin-left: - $grid-gutter-width * .5;
+      margin-right: - $grid-gutter-width * .5;
     }
 
     @include media-breakpoint-up(xl) {
@@ -92,7 +93,7 @@
       @include media-breakpoint-between(sm, md) {
         align-items: flex-start;
         margin-top: .125rem;
-        padding-left: $grid-gutter-width / 2;
+        padding-left: $grid-gutter-width * .5;
       }
       @include media-breakpoint-up(xl) {
         margin-bottom: 0;
@@ -105,7 +106,7 @@
       @include media-breakpoint-between(sm, md) {
         flex: 0 0 33.3333333333%;
         max-width: 33.3333333333%;
-        padding: 0 $grid-gutter-width / 2;
+        padding: 0 $grid-gutter-width * .5;
       }
       @include media-breakpoint-up(xl) {
         text-align: left;

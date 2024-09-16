@@ -5,19 +5,20 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    background-color: $white;
+    background-color: $body-bg;
+    border-radius: $border-radius;
     border: $input-border-width solid $input-border-color;
     font-size: .625rem;
     padding: .5rem;
-    @include hover-focus() {
+    &:hover,&:focus{
       box-shadow: none;
     }
-    @include hover() {
+    &:hover{
       color: $primary;
     }
   }
 
-  &__decrease {
+  &__decrease{
     left: 0;
     border-right: none;
     border-top-right-radius: 0;

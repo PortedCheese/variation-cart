@@ -7,7 +7,7 @@
         </product-variations>
 
         <div class="product-add-to-cart__addons" v-if="Object.keys(addonVariations).length">
-            <div class="product-add-to-cart__addons-title " data-toggle="modal" data-target="#addonsModal">Дополнения к заказу:</div>
+            <div class="product-add-to-cart__addons-title " data-bs-toggle="modal" data-bs-target="#addonsModal">Дополнения к заказу:</div>
             <div class="rub-format variation-price__value">
                     <span class="rub-format__value">
                       {{ addonVariationsSumm.price }}
@@ -28,7 +28,7 @@
 
         <div class="product-add-to-cart">
             <div class="choose-quantity product-add-to-cart__quantity"  v-if="variationData && !toCart">
-                <button class="btn choose-quantity__decrease"
+                <button class="choose-quantity__decrease"
                         type="button"
                         :disabled="quantity <= 1"
                         @click="decreaseQuantity">
@@ -39,7 +39,7 @@
                        class="form-control choose-quantity__input"
                        min="1"
                        v-model="quantity">
-                <button class="btn choose-quantity__increase"
+                <button class="choose-quantity__increase"
                         type="button"
                         @click="increaseQuantity">
                     <i class="fas fa-plus"></i>
@@ -79,9 +79,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addonsModalLabel">Дополнения</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="d-flex flex-row flex-wrap">
@@ -107,7 +105,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                     </div>
                 </div>
             </div>

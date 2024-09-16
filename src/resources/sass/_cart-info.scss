@@ -1,5 +1,5 @@
 .cart-info {
-  padding: $grid-gutter-width / 2 0;
+  padding: $grid-gutter-width * .5 0;
   z-index: 900;
   position: sticky;
   top: 0;
@@ -42,7 +42,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: $grid-gutter-width / 2;
+      margin-bottom: $grid-gutter-width * .5;
       &_total {
         align-items: flex-end;
       }
@@ -88,7 +88,8 @@
     &-title {
       font-size: 1rem;
       color: $body-color;
-      @include hover() {
+      text-decoration: none;
+      &:hover{
         text-decoration: none;
       }
     }

@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
-  margin-bottom: $grid-gutter-width / 2;
+  margin-bottom: $grid-gutter-width * .5;
 
   &__quantity {
     margin-right: $grid-gutter-width;

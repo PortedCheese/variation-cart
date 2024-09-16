@@ -1,6 +1,6 @@
 .complete-page {
   &__result {
-    margin-bottom: $grid-gutter-width / 2;
+    margin-bottom: $grid-gutter-width * .5;
     font-weight: $font-weight-bold;
   }
   &__text, &__ico {

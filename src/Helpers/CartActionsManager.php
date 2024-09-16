@@ -457,7 +457,6 @@ class CartActionsManager
 //        }
 
 
-//
         $this->clearCart($cart);
         event(new CreateNewOrder($order));
         return $order;
