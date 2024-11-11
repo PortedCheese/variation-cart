@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <div class="product-add-to-cart">
+        <div v-if="variationData" class="product-add-to-cart">
             <div class="choose-quantity product-add-to-cart__quantity"  v-if="variationData && !toCart">
                 <button class="choose-quantity__decrease"
                         type="button"
@@ -74,7 +74,7 @@
             </template>
         </div>
 
-        <div class="modal fade" id="addonsModal" tabindex="-1" aria-labelledby="addonsModalLabel" aria-hidden="true">
+        <div v-if="variationData && Object.keys(addonVariations).length" class="modal fade" id="addonsModal" tabindex="-1" aria-labelledby="addonsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
