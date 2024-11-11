@@ -179,11 +179,11 @@ class CartActionsManager
      *
      * @param ProductVariation $variation
      * @param int $quantity
-     * @param array|null $addons
      * @param Cart|null $customCart
+     * @param array|null $addons
      * @return Cart
      */
-    public function addToCart(ProductVariation $variation, $quantity = 1, Array $addons = null, Cart $customCart = null)
+    public function addToCart(ProductVariation $variation, $quantity = 1,  Array $addons = null, Cart $customCart = null)
     {
         $cart = $customCart ?? $this->initCart();
         // Если вариация выключена, вернуть корзину без изменения.
@@ -564,7 +564,7 @@ class CartActionsManager
     }
 
     /**
-     * Обеденить корзины.
+     * Объединить корзины.
      *
      * @param Cart $anonymous
      * @param Cart $userCart
@@ -574,8 +574,23 @@ class CartActionsManager
         foreach ($userCart->variations as $variation) {
             $pivot = $variation->pivot;
             $quantity = $pivot->quantity;
-            $this->addToCart($variation, $quantity, $anonymous);
+            if (count($userCart->sets)) {
+                foreach ($userCart->sets as $set){
+                    if ($set->product_variation_id === $variation->id){
+                        $userAddons = $set->addons;
+                        $addons = [];
+                        foreach ($userAddons as $addon){
+                            $addons[] = ["id" => $addon->product_variation_id, "quantity" => $addon->quantity];
+                        }
+                        $this->addToCart($variation, $quantity, $addons,  $anonymous);
+                    }
+                }
+            }
+            else
+                $this->addToCart($variation, $quantity, null, $anonymous);
+
         }
+
         try {
             $userCart->delete();
         }
