@@ -6,6 +6,12 @@
         >
         </product-variations>
 
+        <div class="choose-quantity product-add-to-cart__quantity mb-4" v-if="Object.keys(addonVariations).length">
+            <div class="form-control choose-quantity__input" >
+                1
+            </div>
+        </div>
+
         <div class="product-add-to-cart__addons" v-if="Object.keys(addonVariations).length">
             <div class="product-add-to-cart__addons-title " data-bs-toggle="modal" data-bs-target="#addonsModal">Дополнения к заказу:</div>
             <div class="rub-format variation-price__value">
@@ -27,7 +33,7 @@
         </div>
 
         <div v-if="variationData" class="product-add-to-cart">
-            <div class="choose-quantity product-add-to-cart__quantity"  v-if="variationData && !toCart">
+            <div class="choose-quantity product-add-to-cart__quantity"  v-if="variationData && !toCart && !Object.keys(addonVariations).length">
                 <button class="choose-quantity__decrease"
                         type="button"
                         :disabled="quantity <= 1"
@@ -74,8 +80,8 @@
             </template>
         </div>
 
-        <div v-if="variationData && Object.keys(addonVariations).length" class="modal fade" id="addonsModal" tabindex="-1" aria-labelledby="addonsModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+        <div v-if="variationData && Object.keys(addonVariations).length" class="modal" id="addonsModal" tabindex="-1" aria-labelledby="addonsModalLabel"  role="dialog">
+            <div class="modal-dialog modal-lg" role="document" id="addonsModal" aria-labelledby="addonsModalLabel">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addonsModalLabel">Дополнения</h5>
@@ -83,11 +89,11 @@
                     </div>
                     <div class="modal-body">
                         <div class="d-flex flex-row flex-wrap">
-                            <div class="card mr-2 mb-2" v-for="(item,index) in addonVariations">
+                            <div class="alert alert-light alert-dismissible fade show me-2 mb-2" v-for="(item,index) in addonVariations">
                                 <div class="card-header p-1">
                                     {{ item.description }}
-                                    <button type="button" class="close" @click="removeThisAddon(item)">
-                                        <span aria-hidden="true">&times;</span>
+                                    <button type="button" class="btn-close" @click="removeThisAddon(item)"
+                                            data-bs-dismiss="modal" aria-label="Close">
                                     </button>
                                 </div>
                                 <div class="card-body p-1">
@@ -104,9 +110,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                    </div>
+
                 </div>
             </div>
         </div>
