@@ -81,7 +81,7 @@
         </div>
 
         <div v-if="variationData && Object.keys(addonVariations).length" class="modal" id="addonsModal" tabindex="-1" aria-labelledby="addonsModalLabel"  role="dialog">
-            <div class="modal-dialog modal-lg" role="document" id="addonsModal" aria-labelledby="addonsModalLabel">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addonsModalLabel">Дополнения</h5>
@@ -92,7 +92,7 @@
                             <div class="alert alert-light alert-dismissible fade show me-2 mb-2" v-for="(item,index) in addonVariations">
                                 <div class="card-header p-1">
                                     {{ item.description }}
-                                    <button type="button" class="btn-close" @click="removeThisAddon(item)"
+                                    <button v-if="!toCart" type="button" class="btn-close" @click="removeThisAddon(item)"
                                             data-bs-dismiss="modal" aria-label="Close">
                                     </button>
                                 </div>
