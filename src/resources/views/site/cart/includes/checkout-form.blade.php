@@ -67,10 +67,11 @@
                            required
                            name="privacy_policy">
                     <label class="custom-control-label" for="privacy_policy">
+                        Я даю свое
                         @if (\Illuminate\Support\Facades\Route::has("policy"))
-                            Даю согласие на <a href="{{ route("policy") }}">обработку персональных данных</a>
+                            <a href="#agreementModal" data-toggle="modal" data-target="#agreementModal">Согласие на обработку персональных данных</a> и принимаю условия <a href="{{ route("policy") }}" target="_blank">Политики по обработке персональных данных</a>
                         @else
-                            Даю согласие на обработку персональных данных
+                           Cогласие на обработку персональных данных и принимаю условия Политики по обработке персональных данных
                         @endif
                     </label>
                     @error("privacy_policy")
